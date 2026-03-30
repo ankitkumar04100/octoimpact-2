@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, Zap, TrendingUp, Coins, Vote, LogOut, RotateCcw } from 'lucide-react';
+import { LayoutDashboard, Zap, TrendingUp, Coins, Vote, LogOut, RotateCcw, ArrowUpRight } from 'lucide-react';
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
