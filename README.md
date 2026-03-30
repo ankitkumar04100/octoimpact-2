@@ -12,6 +12,10 @@
 
 ---
 
+**[Demo Video](https://youtu.be/j6ysSrBWS3E)**
+
+---
+
 # 🏆 **Project Overview**
 
 **OctoImpact 2.0** is a **next-generation sustainability intelligence platform** that unifies:
