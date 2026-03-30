@@ -4,7 +4,7 @@
 
 ---
 
-**[🔗 Octoimpact 2.0 App](https://octoimpact-2.vercel.app/)**
+**[🔗 Octoimpact 2.0 App](https://octoimpact-2.lovable.app)**
 
 ---
 
