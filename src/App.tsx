@@ -10,6 +10,8 @@ import ActionsPage from "./pages/ActionsPage";
 import FinTechPage from "./pages/FinTechPage";
 import Web3Page from "./pages/Web3Page";
 import DAOPage from "./pages/DAOPage";
+import AuthPage from "./pages/AuthPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +25,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Landing />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/actions" element={<ActionsPage />} />
             <Route path="/fintech" element={<FinTechPage />} />

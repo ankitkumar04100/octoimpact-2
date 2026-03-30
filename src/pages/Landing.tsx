@@ -2,12 +2,12 @@ import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Brain, TrendingUp, Coins, Shield, BarChart3, Gamepad2, ArrowRight } from 'lucide-react';
+import { Brain, TrendingUp, Coins, Shield, BarChart3, Gamepad2, ArrowRight, Sparkles } from 'lucide-react';
 import octoHero from '@/assets/octo-hero.png';
 
 const FEATURES = [
-  { icon: Brain, title: 'AI Sustainability Agent', desc: 'Context-aware recommendations that adapt to your habits, streaks, and spending patterns.' },
-  { icon: TrendingUp, title: 'EcoScore Wallet', desc: 'Classify transactions, compute your Financial Sustainability Index, and track carbon cost.' },
+  { icon: Brain, title: 'AI Sustainability Agent', desc: 'Context-aware recommendations powered by Lovable AI that adapt to your habits, streaks, and spending patterns.' },
+  { icon: TrendingUp, title: 'EcoScore Wallet', desc: 'Classify transactions, compute your Financial Sustainability Index, and track carbon cost in real time.' },
   { icon: Coins, title: 'Web3 Rewards', desc: 'Earn ImpactTokens (ERC-20) and EcoBadge NFTs for every sustainable action you take.' },
   { icon: BarChart3, title: 'Real-Time Dashboard', desc: 'Live-updating charts, scores, insights, and achievement tracking in one premium view.' },
   { icon: Shield, title: 'DAO Governance', desc: 'Create proposals, vote with token weight, and shape community sustainability goals.' },
@@ -26,26 +26,43 @@ const fade = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } };
 
 export default function Landing() {
   const navigate = useNavigate();
-  const { enterDemoMode, enterGuestMode } = useApp();
+  const { enterDemoMode, enterGuestMode, user } = useApp();
 
   const handleDemo = () => { enterDemoMode(); navigate('/dashboard'); };
   const handleGuest = () => { enterGuestMode(); navigate('/dashboard'); };
+
+  // If user already authenticated, show their live KPIs
+  const kpis = user ? [
+    { label: 'EcoScore', value: String(user.ecoScore), suffix: '/100', desc: 'Your score' },
+    { label: 'Tokens Earned', value: String(user.totalTokens), suffix: '', desc: 'ImpactTokens' },
+    { label: 'Streak', value: String(user.streak), suffix: ' days', desc: 'Current streak' },
+    { label: 'Level', value: String(user.level), suffix: '', desc: `Level ${user.level}` },
+  ] : [
+    { label: 'EcoScore', value: '76', suffix: '/100', desc: 'Avg. user score' },
+    { label: 'Tokens Earned', value: '12.5K', suffix: '+', desc: 'Community total' },
+    { label: 'CO₂ Saved', value: '4.7', suffix: ' tons', desc: 'This month' },
+    { label: 'Active Users', value: '2.4', suffix: 'K', desc: 'Growing daily' },
+  ];
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Hero */}
       <section className="relative hero-bg min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Subtle dot pattern */}
         <div className="absolute inset-0 opacity-[0.03]" style={{
           backgroundImage: 'radial-gradient(circle at 2px 2px, hsl(180 65% 30%) 1px, transparent 0)',
           backgroundSize: '40px 40px',
         }} />
+        
+        {/* Tentacle divider glow */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 ocean-gradient opacity-40" />
 
         <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 text-center">
           <motion.div initial="hidden" animate="visible" variants={fade} transition={{ duration: 0.6 }}>
             <div className="flex justify-center mb-8">
               <motion.img
                 src={octoHero}
-                alt="OctoImpact AI Octopus"
+                alt="OctoImpact Royal Octopus — AI-powered sustainability mascot"
                 className="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-2xl"
                 width={256}
                 height={256}
@@ -61,7 +78,8 @@ export default function Landing() {
             <p className="mt-5 text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto font-light">
               AI + FinTech + Web3 Sustainability Engine
             </p>
-            <p className="mt-3 text-sm text-muted-foreground/70">
+            <p className="mt-3 text-sm text-muted-foreground/70 flex items-center justify-center gap-2">
+              <Sparkles className="h-3.5 w-3.5" />
               Build habits • Earn tokens • Track impact • Govern together
             </p>
           </motion.div>
@@ -72,12 +90,7 @@ export default function Landing() {
             initial="hidden" animate="visible"
             variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
           >
-            {[
-              { label: 'EcoScore', value: '76', suffix: '/100', desc: 'Avg. user score' },
-              { label: 'Tokens Earned', value: '12.5K', suffix: '+', desc: 'Community total' },
-              { label: 'CO₂ Saved', value: '4.7', suffix: ' tons', desc: 'This month' },
-              { label: 'Active Users', value: '2.4', suffix: 'K', desc: 'Growing daily' },
-            ].map(kpi => (
+            {kpis.map(kpi => (
               <motion.div key={kpi.label} variants={fade} className="glass rounded-2xl p-4 card-hover">
                 <p className="text-3xl md:text-4xl font-display font-black ocean-gradient-text">
                   {kpi.value}<span className="text-lg">{kpi.suffix}</span>
@@ -98,10 +111,10 @@ export default function Landing() {
             <Button variant="glass" size="lg" onClick={handleGuest}>
               👤 Guest Mode
             </Button>
-            <Button variant="outline" size="lg" disabled className="opacity-60">
+            <Button variant="outline" size="lg" onClick={() => navigate('/auth')}>
               📧 Email Login
             </Button>
-            <Button variant="outline" size="lg" disabled className="opacity-60">
+            <Button variant="ocean" size="lg" onClick={() => navigate('/auth')}>
               🔗 Google Login
             </Button>
           </motion.div>
@@ -129,7 +142,7 @@ export default function Landing() {
                 initial="hidden" whileInView="visible" viewport={{ once: true }}
                 variants={fade} transition={{ delay: i * 0.08 }}
               >
-                <div className="h-12 w-12 rounded-xl ocean-gradient flex items-center justify-center mb-5 group-hover:animate-pulse-glow">
+                <div className="h-12 w-12 rounded-xl ocean-gradient flex items-center justify-center mb-5 group-hover:animate-pulse-glow transition-shadow">
                   <f.icon className="h-6 w-6 text-primary-foreground" />
                 </div>
                 <h3 className="text-lg font-display font-bold mb-2">{f.title}</h3>
@@ -139,6 +152,12 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* Tentacle Divider */}
+      <div className="relative h-2 overflow-hidden">
+        <div className="absolute inset-0 ocean-gradient opacity-30" />
+        <div className="absolute inset-0 ocean-gradient opacity-20 blur-sm" />
+      </div>
 
       {/* How It Works */}
       <section className="py-20 px-6 hero-bg">
