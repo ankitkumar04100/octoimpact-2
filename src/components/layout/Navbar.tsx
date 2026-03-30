@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
 import { LayoutDashboard, Zap, TrendingUp, Coins, Vote, LogOut, RotateCcw, ArrowUpRight } from 'lucide-react';
@@ -14,8 +14,13 @@ const NAV_ITEMS = [
 export default function Navbar() {
   const { user, authMode, logout, resetDemo } = useApp();
   const location = useLocation();
+  const navigate = useNavigate();
 
   if (!user) return null;
+
+  const handleSwitchToReal = () => {
+    navigate('/auth');
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass border-b border-border/50">
@@ -45,11 +50,13 @@ export default function Navbar() {
         <div className="flex items-center gap-2">
           <div className="hidden sm:flex items-center gap-2 mr-2">
             <div className="h-8 w-8 rounded-full ocean-gradient flex items-center justify-center text-primary-foreground text-xs font-bold">
-              {user.name.charAt(0)}
+              {user.name.charAt(0).toUpperCase()}
             </div>
             <div className="text-sm">
               <p className="font-medium leading-tight">{user.name}</p>
-              <p className="text-muted-foreground text-xs">{authMode === 'demo' ? 'Demo' : authMode === 'guest' ? 'Guest' : 'User'}</p>
+              <p className="text-muted-foreground text-xs">
+                {authMode === 'demo' ? 'Demo' : authMode === 'guest' ? 'Guest' : authMode === 'google' ? 'Google' : 'User'}
+              </p>
             </div>
           </div>
           {(authMode === 'demo' || authMode === 'guest') && (
@@ -58,7 +65,7 @@ export default function Navbar() {
             </Button>
           )}
           {(authMode === 'demo' || authMode === 'guest') && (
-            <Button variant="ocean" size="sm" onClick={logout} className="gap-1.5">
+            <Button variant="ocean" size="sm" onClick={handleSwitchToReal} className="gap-1.5">
               <ArrowUpRight className="h-3.5 w-3.5" /> Switch to Real
             </Button>
           )}

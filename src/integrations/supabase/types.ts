@@ -14,7 +14,311 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      actions: {
+        Row: {
+          ai_category: string | null
+          blockchain_status: string
+          category: string
+          co2_reduced: number
+          created_at: string
+          financial_impact: number
+          id: string
+          impact_value: number
+          reward_minted: boolean
+          timestamp: string
+          tokens_earned: number
+          type: string
+          user_id: string
+        }
+        Insert: {
+          ai_category?: string | null
+          blockchain_status?: string
+          category: string
+          co2_reduced?: number
+          created_at?: string
+          financial_impact?: number
+          id?: string
+          impact_value?: number
+          reward_minted?: boolean
+          timestamp?: string
+          tokens_earned?: number
+          type: string
+          user_id: string
+        }
+        Update: {
+          ai_category?: string | null
+          blockchain_status?: string
+          category?: string
+          co2_reduced?: number
+          created_at?: string
+          financial_impact?: number
+          id?: string
+          impact_value?: number
+          reward_minted?: boolean
+          timestamp?: string
+          tokens_earned?: number
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      badges: {
+        Row: {
+          badge_id: string
+          description: string | null
+          earned_at: string
+          id: string
+          metadata: Json | null
+          name: string
+          tier: string
+          token_id: string | null
+          user_id: string
+        }
+        Insert: {
+          badge_id: string
+          description?: string | null
+          earned_at?: string
+          id?: string
+          metadata?: Json | null
+          name: string
+          tier?: string
+          token_id?: string | null
+          user_id: string
+        }
+        Update: {
+          badge_id?: string
+          description?: string | null
+          earned_at?: string
+          id?: string
+          metadata?: Json | null
+          name?: string
+          tier?: string
+          token_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      insights: {
+        Row: {
+          generated_by: string
+          id: string
+          text: string
+          timestamp: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          generated_by?: string
+          id?: string
+          text: string
+          timestamp?: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          generated_by?: string
+          id?: string
+          text?: string
+          timestamp?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          eco_score: number
+          email: string
+          energy_points: number
+          fsi_score: number
+          id: string
+          join_date: string
+          level: number
+          name: string
+          streak: number
+          today_tokens: number
+          total_tokens: number
+          updated_at: string
+          wallet_address: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          eco_score?: number
+          email?: string
+          energy_points?: number
+          fsi_score?: number
+          id: string
+          join_date?: string
+          level?: number
+          name?: string
+          streak?: number
+          today_tokens?: number
+          total_tokens?: number
+          updated_at?: string
+          wallet_address?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          eco_score?: number
+          email?: string
+          energy_points?: number
+          fsi_score?: number
+          id?: string
+          join_date?: string
+          level?: number
+          name?: string
+          streak?: number
+          today_tokens?: number
+          total_tokens?: number
+          updated_at?: string
+          wallet_address?: string | null
+        }
+        Relationships: []
+      }
+      proposals: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          created_by_name: string | null
+          description: string | null
+          end_time: string
+          id: string
+          no_votes: number
+          status: string
+          text: string
+          yes_votes: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          description?: string | null
+          end_time: string
+          id?: string
+          no_votes?: number
+          status?: string
+          text: string
+          yes_votes?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          description?: string | null
+          end_time?: string
+          id?: string
+          no_votes?: number
+          status?: string
+          text?: string
+          yes_votes?: number
+        }
+        Relationships: []
+      }
+      token_logs: {
+        Row: {
+          action_type: string
+          amount: number
+          id: string
+          nft_issued: boolean
+          timestamp: string
+          tx_hash: string
+          user_id: string
+        }
+        Insert: {
+          action_type?: string
+          amount?: number
+          id?: string
+          nft_issued?: boolean
+          timestamp?: string
+          tx_hash?: string
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          amount?: number
+          id?: string
+          nft_issued?: boolean
+          timestamp?: string
+          tx_hash?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          carbon_intensity: number
+          category: string
+          classification: string
+          created_at: string
+          date: string
+          description: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          carbon_intensity?: number
+          category?: string
+          classification?: string
+          created_at?: string
+          date?: string
+          description: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          carbon_intensity?: number
+          category?: string
+          classification?: string
+          created_at?: string
+          date?: string
+          description?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      votes: {
+        Row: {
+          created_at: string
+          id: string
+          proposal_id: string
+          user_id: string
+          vote: string
+          weight: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          proposal_id: string
+          user_id: string
+          vote: string
+          weight?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          proposal_id?: string
+          user_id?: string
+          vote?: string
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "votes_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
