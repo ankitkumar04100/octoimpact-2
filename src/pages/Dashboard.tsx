@@ -1,19 +1,20 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import Navbar from '@/components/layout/Navbar';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, Coins, Flame, Leaf, Brain, Award } from 'lucide-react';
+import { TrendingUp, Coins, Flame, Leaf, Brain, Award, Sparkles, RefreshCw } from 'lucide-react';
 import { getLevelProgress } from '@/engines/gamification';
 import { computeEcoScore } from '@/engines/sustainability';
 import { TIER_COLORS } from '@/types';
+import { Button } from '@/components/ui/button';
 
 const CHART_COLORS = ['#0d9488', '#06b6d4', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444'];
-
 const fade = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
 
 export default function Dashboard() {
-  const { user, actions, insights, badges, tokenLogs, achievements } = useApp();
+  const { user, actions, insights, badges, tokenLogs, achievements, fetchAIInsights, authMode } = useApp();
+  const [aiLoading, setAiLoading] = useState(false);
 
   const ecoData = useMemo(() => {
     const sorted = [...actions].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
@@ -35,6 +36,19 @@ export default function Dashboard() {
   }, [actions]);
 
   const levelInfo = user ? getLevelProgress(user.totalTokens) : { level: 1, progress: 0, nextThreshold: 10 };
+
+  // Auto-fetch AI insights for non-demo modes on mount
+  useEffect(() => {
+    if (user && authMode !== 'demo' && authMode !== 'guest' && insights.length === 0) {
+      handleFetchAI();
+    }
+  }, [user, authMode]);
+
+  const handleFetchAI = async () => {
+    setAiLoading(true);
+    try { await fetchAIInsights(); } finally { setAiLoading(false); }
+  };
+
   if (!user) return null;
 
   return (
@@ -102,15 +116,35 @@ export default function Dashboard() {
           <motion.div className="glass rounded-2xl p-6" variants={fade} initial="hidden" animate="show" transition={{ delay: 0.15 }}>
             <h3 className="font-display font-bold mb-4 flex items-center gap-2">
               <Brain className="h-5 w-5 text-ocean-cyan" /> AI Insights
+              <Button variant="ghost" size="icon" className="ml-auto h-7 w-7" onClick={handleFetchAI} disabled={aiLoading} title="Refresh AI Insights">
+                <RefreshCw className={`h-3.5 w-3.5 ${aiLoading ? 'animate-spin' : ''}`} />
+              </Button>
             </h3>
             <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
-              {insights.length > 0 ? insights.map(ins => (
-                <div key={ins.id} className="glass-ocean rounded-xl p-3 text-sm leading-relaxed">
-                  {ins.text}
+              {aiLoading && insights.length === 0 && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground py-4">
+                  <Sparkles className="h-4 w-4 animate-pulse" /> Generating AI insights...
                 </div>
-              )) : (
-                <p className="text-muted-foreground text-sm">Insights will appear as you take actions</p>
               )}
+              <AnimatePresence>
+                {insights.length > 0 ? insights.map(ins => (
+                  <motion.div
+                    key={ins.id}
+                    className="glass-ocean rounded-xl p-3 text-sm leading-relaxed"
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    {ins.type === 'action' && <span className="text-ocean-teal font-semibold">🎯 </span>}
+                    {ins.type === 'goal' && <span className="text-ocean-blue font-semibold">🚀 </span>}
+                    {ins.type === 'warning' && <span className="text-orange-500 font-semibold">⚠️ </span>}
+                    {ins.type === 'tip' && <span className="text-ocean-cyan font-semibold">💡 </span>}
+                    {ins.text}
+                  </motion.div>
+                )) : !aiLoading && (
+                  <p className="text-muted-foreground text-sm">Insights will appear as you take actions</p>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
 
@@ -197,7 +231,7 @@ export default function Dashboard() {
                     <div className="h-1.5 rounded-full bg-muted mt-1 overflow-hidden">
                       <div
                         className="h-full rounded-full ocean-gradient transition-all duration-500"
-                        style={{ width: `${(a.progress / a.target) * 100}%` }}
+                        style={{ width: `${Math.min(100, (a.progress / a.target) * 100)}%` }}
                       />
                     </div>
                   </div>
