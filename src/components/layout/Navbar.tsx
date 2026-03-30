@@ -52,14 +52,21 @@ export default function Navbar() {
               <p className="text-muted-foreground text-xs">{authMode === 'demo' ? 'Demo' : authMode === 'guest' ? 'Guest' : 'User'}</p>
             </div>
           </div>
-          {authMode === 'demo' && (
+          {(authMode === 'demo' || authMode === 'guest') && (
             <Button variant="ghost" size="sm" onClick={resetDemo} title="Reset Demo">
               <RotateCcw className="h-4 w-4" />
             </Button>
           )}
-          <Button variant="ghost" size="sm" onClick={logout}>
-            <LogOut className="h-4 w-4" />
-          </Button>
+          {(authMode === 'demo' || authMode === 'guest') && (
+            <Button variant="ocean" size="sm" onClick={logout} className="gap-1.5">
+              <ArrowUpRight className="h-3.5 w-3.5" /> Switch to Real
+            </Button>
+          )}
+          {authMode !== 'demo' && authMode !== 'guest' && (
+            <Button variant="ghost" size="sm" onClick={logout}>
+              <LogOut className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
     </header>
