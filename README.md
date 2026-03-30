@@ -4,11 +4,11 @@
 
 ---
 
-**[Octoimpact 2.0 App](https://octoimpact-2.vercel.app/)**
+**[🔗 Octoimpact 2.0 App](https://octoimpact-2.vercel.app/)**
 
 ---
 
-**[Octoimpact Presentation](https://1drv.ms/p/c/6a76ef0b95b83422/IQBPvk05FKbER6Wc-Ewnwjt5AYLDMZBmCZTRwL9VD5uhRlw?e=d5G036)**
+**[🔗 Octoimpact Presentation](https://1drv.ms/p/c/6a76ef0b95b83422/IQBPvk05FKbER6Wc-Ewnwjt5AYLDMZBmCZTRwL9VD5uhRlw?e=d5G036)**
 
 ---
 
