@@ -73,10 +73,10 @@ export default function Landing() {
             variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
           >
             {[
-              { label: 'EcoScore', value: '76', suffix: '/100' },
-              { label: 'Tokens Earned', value: '152', suffix: '' },
-              { label: 'CO₂ Saved', value: '47', suffix: ' kg' },
-              { label: 'Active Users', value: '2.4', suffix: 'K' },
+              { label: 'EcoScore', value: '76', suffix: '/100', desc: 'Avg. user score' },
+              { label: 'Tokens Earned', value: '12.5K', suffix: '+', desc: 'Community total' },
+              { label: 'CO₂ Saved', value: '4.7', suffix: ' tons', desc: 'This month' },
+              { label: 'Active Users', value: '2.4', suffix: 'K', desc: 'Growing daily' },
             ].map(kpi => (
               <motion.div key={kpi.label} variants={fade} className="glass rounded-2xl p-4 card-hover">
                 <p className="text-3xl md:text-4xl font-display font-black ocean-gradient-text">
