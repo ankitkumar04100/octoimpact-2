@@ -2,8 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Brain, TrendingUp, Coins, Shield, BarChart3, Gamepad2, ArrowRight, Sparkles } from 'lucide-react';
+import { Brain, TrendingUp, Coins, Shield, BarChart3, Gamepad2, ArrowRight, Sparkles, MessageSquare } from 'lucide-react';
 import octoHero from '@/assets/octo-hero.png';
+import OctomindChat from '@/components/chat/OctomindChat';
 
 const FEATURES = [
   { icon: Brain, title: 'AI Sustainability Agent', desc: 'Context-aware recommendations powered by Lovable AI that adapt to your habits, streaks, and spending patterns.' },
