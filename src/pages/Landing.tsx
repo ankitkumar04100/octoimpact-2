@@ -190,6 +190,7 @@ export default function Landing() {
           Built with conviction for a greener future
         </p>
       </footer>
+      {user && <OctomindChat />}
     </div>
   );
 }
