@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import Navbar from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
-import { Vote, Plus, Clock, CheckCircle, XCircle, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Vote, Plus, Clock, CheckCircle, XCircle, ThumbsUp, ThumbsDown, Info } from 'lucide-react';
+import OctomindChat from '@/components/chat/OctomindChat';
 
 export default function DAOPage() {
   const { user, proposals, createProposal, vote } = useApp();
@@ -26,11 +27,14 @@ export default function DAOPage() {
   const completed = proposals.filter(p => p.status !== 'active' || new Date(p.endTime) <= new Date());
   const votingPower = Math.max(1, Math.floor(user.totalTokens / 10));
 
+  // User's voting history
+  const votedProposalIds = proposals.filter(p => p.voters.includes(user.id)).map(p => p.id);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="pt-20 pb-12 px-4 max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
             <motion.h1 className="text-3xl font-display font-black" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <span className="ocean-gradient-text">Impact</span>DAO
@@ -40,6 +44,15 @@ export default function DAOPage() {
           <Button variant="ocean" onClick={() => setShowForm(!showForm)} className="gap-2">
             <Plus className="h-4 w-4" /> New Proposal
           </Button>
+        </div>
+
+        {/* How it works */}
+        <div className="glass-ocean rounded-2xl p-4 mb-6 flex items-start gap-3">
+          <Info className="h-4 w-4 text-ocean-teal mt-0.5 shrink-0" />
+          <div className="text-xs text-muted-foreground">
+            <p><strong className="text-foreground">Voting Power = OCTI Balance ÷ 10</strong></p>
+            <p className="mt-1">Your tokens directly influence governance outcomes. More tokens = stronger voice. Double voting is prevented.</p>
+          </div>
         </div>
 
         {/* Voting Power */}
@@ -52,51 +65,56 @@ export default function DAOPage() {
         </div>
 
         {/* Create Form */}
-        {showForm && (
-          <motion.div
-            className="glass rounded-2xl p-6 mb-8"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-          >
-            <h3 className="font-display font-bold mb-4">Create Proposal</h3>
-            <div className="space-y-4">
-              <input
-                className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                placeholder="Proposal title..."
-                value={text}
-                onChange={e => setText(e.target.value)}
-                maxLength={200}
-              />
-              <textarea
-                className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring min-h-[80px] resize-none"
-                placeholder="Description..."
-                value={desc}
-                onChange={e => setDesc(e.target.value)}
-                maxLength={1000}
-              />
-              <div className="flex items-center gap-4">
-                <label className="text-sm text-muted-foreground">Duration:</label>
-                <select
-                  className="rounded-lg border border-input bg-background px-3 py-2 text-sm"
-                  value={duration}
-                  onChange={e => setDuration(Number(e.target.value))}
-                >
-                  <option value={3}>3 days</option>
-                  <option value={7}>7 days</option>
-                  <option value={14}>14 days</option>
-                  <option value={30}>30 days</option>
-                </select>
-                <Button variant="ocean" onClick={handleCreate} disabled={!text.trim() || !desc.trim()}>
-                  Submit Proposal
-                </Button>
+        <AnimatePresence>
+          {showForm && (
+            <motion.div
+              className="glass rounded-2xl p-6 mb-8"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+            >
+              <h3 className="font-display font-bold mb-4">Create Proposal</h3>
+              <div className="space-y-4">
+                <input
+                  className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  placeholder="Proposal title..."
+                  value={text}
+                  onChange={e => setText(e.target.value)}
+                  maxLength={200}
+                />
+                <textarea
+                  className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring min-h-[80px] resize-none"
+                  placeholder="Description..."
+                  value={desc}
+                  onChange={e => setDesc(e.target.value)}
+                  maxLength={1000}
+                />
+                <div className="flex items-center gap-4 flex-wrap">
+                  <label className="text-sm text-muted-foreground">Duration:</label>
+                  <select
+                    className="rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                    value={duration}
+                    onChange={e => setDuration(Number(e.target.value))}
+                  >
+                    <option value={1}>1 day</option>
+                    <option value={3}>3 days</option>
+                    <option value={7}>7 days</option>
+                    <option value={14}>14 days</option>
+                    <option value={30}>30 days</option>
+                  </select>
+                  <Button variant="ocean" onClick={handleCreate} disabled={!text.trim() || !desc.trim()}>
+                    Submit Proposal
+                  </Button>
+                  <Button variant="ghost" onClick={() => setShowForm(false)}>Cancel</Button>
+                </div>
               </div>
-            </div>
-          </motion.div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Active Proposals */}
         <h2 className="text-xl font-display font-bold mb-4 flex items-center gap-2">
-          <Clock className="h-5 w-5 text-ocean-cyan" /> Active Proposals
+          <Clock className="h-5 w-5 text-ocean-cyan" /> Active Proposals ({active.length})
         </h2>
         {active.length > 0 ? (
           <div className="space-y-4 mb-10">
@@ -104,44 +122,57 @@ export default function DAOPage() {
               const total = p.yesVotes + p.noVotes;
               const yesPct = total > 0 ? (p.yesVotes / total) * 100 : 50;
               const hasVoted = p.voters.includes(user.id);
-              const remaining = Math.max(0, Math.ceil((new Date(p.endTime).getTime() - Date.now()) / 86400000));
+              const endDate = new Date(p.endTime);
+              const remaining = Math.max(0, Math.ceil((endDate.getTime() - Date.now()) / 86400000));
+              const hours = Math.max(0, Math.ceil((endDate.getTime() - Date.now()) / 3600000));
 
               return (
-                <motion.div key={p.id} className="glass rounded-2xl p-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <motion.div key={p.id} className="glass rounded-2xl p-6" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h3 className="font-bold">{p.text}</h3>
                       <p className="text-sm text-muted-foreground mt-1">{p.description}</p>
                     </div>
-                    <span className="text-xs bg-ocean-teal/10 text-ocean-teal px-2 py-1 rounded-full font-medium">
-                      {remaining}d left
+                    <span className="text-xs bg-ocean-teal/10 text-ocean-teal px-2.5 py-1 rounded-full font-medium flex items-center gap-1 shrink-0">
+                      <Clock className="h-3 w-3" />
+                      {remaining > 0 ? `${remaining}d ${hours % 24}h` : `${hours}h left`}
                     </span>
                   </div>
 
                   {/* Tally Bar */}
-                  <div className="h-3 rounded-full bg-muted overflow-hidden mb-3">
-                    <div className="h-full bg-ocean-green rounded-full transition-all" style={{ width: `${yesPct}%` }} />
+                  <div className="h-4 rounded-full bg-muted overflow-hidden mb-2 relative">
+                    <motion.div
+                      className="h-full bg-ocean-green rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${yesPct}%` }}
+                      transition={{ duration: 0.5 }}
+                    />
+                    {total > 0 && (
+                      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-foreground/70">
+                        {Math.round(yesPct)}% YES
+                      </span>
+                    )}
                   </div>
                   <div className="flex justify-between text-xs text-muted-foreground mb-4">
-                    <span>👍 {p.yesVotes} yes</span>
-                    <span>👎 {p.noVotes} no</span>
+                    <span>👍 {p.yesVotes} yes ({total > 0 ? Math.round(yesPct) : 0}%)</span>
+                    <span>👎 {p.noVotes} no ({total > 0 ? Math.round(100 - yesPct) : 0}%)</span>
                   </div>
 
                   {!hasVoted ? (
                     <div className="flex gap-2">
-                      <Button variant="ocean" size="sm" onClick={() => vote(p.id, 'yes')} className="gap-1">
+                      <Button variant="ocean" size="sm" onClick={() => vote(p.id, 'yes')} className="gap-1.5">
                         <ThumbsUp className="h-4 w-4" /> Vote Yes ({votingPower})
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => vote(p.id, 'no')} className="gap-1">
+                      <Button variant="outline" size="sm" onClick={() => vote(p.id, 'no')} className="gap-1.5">
                         <ThumbsDown className="h-4 w-4" /> Vote No ({votingPower})
                       </Button>
                     </div>
                   ) : (
                     <p className="text-sm text-ocean-teal font-medium flex items-center gap-1">
-                      <CheckCircle className="h-4 w-4" /> You voted on this proposal
+                      <CheckCircle className="h-4 w-4" /> You voted on this proposal (weight: {votingPower})
                     </p>
                   )}
-                  <p className="text-xs text-muted-foreground mt-2">By {p.createdBy}</p>
+                  <p className="text-xs text-muted-foreground mt-2">By {p.createdBy} • {new Date(p.createdAt).toLocaleDateString()}</p>
                 </motion.div>
               );
             })}
@@ -153,31 +184,52 @@ export default function DAOPage() {
           </div>
         )}
 
+        {/* Your Votes */}
+        {votedProposalIds.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-xl font-display font-bold mb-4">Your Votes ({votedProposalIds.length})</h2>
+            <div className="space-y-2">
+              {proposals.filter(p => votedProposalIds.includes(p.id)).map(p => (
+                <div key={p.id} className="glass rounded-xl p-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">{p.text}</p>
+                    <p className="text-xs text-muted-foreground">{p.yesVotes} yes / {p.noVotes} no</p>
+                  </div>
+                  <span className="text-xs text-ocean-teal font-medium">✓ Voted</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Completed */}
         {completed.length > 0 && (
           <>
-            <h2 className="text-xl font-display font-bold mb-4">Completed</h2>
+            <h2 className="text-xl font-display font-bold mb-4">Completed ({completed.length})</h2>
             <div className="space-y-3">
-              {completed.map(p => (
-                <div key={p.id} className="glass rounded-xl p-4 opacity-70">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium">{p.text}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {p.yesVotes > p.noVotes ? '✅ Passed' : '❌ Rejected'} • {p.yesVotes} yes / {p.noVotes} no
-                      </p>
+              {completed.map(p => {
+                const passed = p.yesVotes > p.noVotes;
+                return (
+                  <div key={p.id} className="glass rounded-xl p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium">{p.text}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {passed ? '✅ Passed' : '❌ Rejected'} • {p.yesVotes} yes / {p.noVotes} no
+                        </p>
+                      </div>
+                      <div className={`px-2.5 py-1 rounded-full text-xs font-semibold ${passed ? 'bg-ocean-green/10 text-ocean-green' : 'bg-destructive/10 text-destructive'}`}>
+                        {passed ? 'PASSED' : 'REJECTED'}
+                      </div>
                     </div>
-                    {p.yesVotes > p.noVotes ?
-                      <CheckCircle className="h-5 w-5 text-ocean-green" /> :
-                      <XCircle className="h-5 w-5 text-destructive" />
-                    }
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </>
         )}
       </main>
+      <OctomindChat />
     </div>
   );
 }

@@ -3,14 +3,15 @@ import { useApp } from '@/contexts/AppContext';
 import Navbar from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import { parseCSVTransactions, getCategoryStats, getWasteAlerts, computeFSI, computeEcoScoreFromTransactions } from '@/engines/fintech';
-import { Upload, AlertTriangle, TrendingUp, DollarSign, Leaf } from 'lucide-react';
+import { Upload, AlertTriangle, TrendingUp, DollarSign, Leaf, Sparkles } from 'lucide-react';
+import OctomindChat from '@/components/chat/OctomindChat';
 
 const COLORS = ['#0d9488', '#06b6d4', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444'];
 
 export default function FinTechPage() {
-  const { user, transactions, addTransactions } = useApp();
+  const { user, transactions, addTransactions, insights } = useApp();
   const [dragOver, setDragOver] = useState(false);
 
   const handleFile = useCallback((file: File) => {
@@ -42,7 +43,7 @@ export default function FinTechPage() {
   const alerts = useMemo(() => getWasteAlerts(transactions), [transactions]);
 
   const catChartData = useMemo(() =>
-    Object.entries(catStats).map(([name, d]) => ({ name, spend: d.spend, green: d.greenCount, carbon: d.carbonCount })),
+    Object.entries(catStats).map(([name, d]) => ({ name, spend: d.spend, carbon: Math.round(d.avgCarbonIntensity * 100) })),
     [catStats]);
 
   const classifData = useMemo(() => {
@@ -54,6 +55,13 @@ export default function FinTechPage() {
       { name: 'Neutral', value: n, color: '#94a3b8' },
       { name: 'Carbon-Heavy', value: c, color: '#ef4444' },
     ].filter(d => d.value > 0);
+  }, [transactions]);
+
+  // Eco-efficiency: green spend vs total spend
+  const ecoEfficiency = useMemo(() => {
+    const greenSpend = transactions.filter(t => t.classification === 'green').reduce((s, t) => s + t.amount, 0);
+    const totalSpend = transactions.reduce((s, t) => s + t.amount, 0);
+    return totalSpend > 0 ? Math.round((greenSpend / totalSpend) * 100) : 0;
   }, [transactions]);
 
   if (!user) return null;
@@ -68,11 +76,12 @@ export default function FinTechPage() {
         <p className="text-muted-foreground mb-8">Upload transactions, classify spending, and track your Financial Sustainability Index.</p>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
           {[
             { icon: TrendingUp, label: 'FSI Score', value: fsi, color: 'text-ocean-teal' },
             { icon: Leaf, label: 'Tx EcoScore', value: ecoFromTx, color: 'text-ocean-green' },
             { icon: DollarSign, label: 'Transactions', value: transactions.length, color: 'text-ocean-cyan' },
+            { icon: Sparkles, label: 'Eco-Efficiency', value: `${ecoEfficiency}%`, color: 'text-ocean-blue' },
             { icon: AlertTriangle, label: 'Alerts', value: alerts.length, color: 'text-orange-500' },
           ].map(s => (
             <div key={s.label} className="glass rounded-2xl p-5">
@@ -118,33 +127,54 @@ export default function FinTechPage() {
             </div>
           )}
 
-          {/* Category Bar */}
+          {/* Category Bar with Carbon Intensity */}
           {catChartData.length > 0 && (
             <div className="glass rounded-2xl p-6">
-              <h3 className="font-display font-bold mb-4">Spending by Category</h3>
+              <h3 className="font-display font-bold mb-4">Spend vs Carbon Intensity</h3>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={catChartData}>
                   <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                   <YAxis tick={{ fontSize: 11 }} />
                   <Tooltip />
-                  <Bar dataKey="spend" fill="hsl(180 65% 30%)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="spend" fill="hsl(180 65% 30%)" radius={[4, 4, 0, 0]} name="Spend ($)" />
+                  <Bar dataKey="carbon" fill="hsl(0 84% 60%)" radius={[4, 4, 0, 0]} name="Carbon %" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           )}
         </div>
 
-        {/* Alerts */}
-        {alerts.length > 0 && (
-          <div className="mb-8">
-            <h3 className="font-display font-bold mb-3">Waste Alerts</h3>
-            <div className="space-y-2">
-              {alerts.map((alert, i) => (
-                <div key={i} className="glass rounded-xl p-4 text-sm border-l-4 border-orange-400">
-                  {alert}
+        {/* Alerts + AI Tips */}
+        {(alerts.length > 0 || insights.length > 0) && (
+          <div className="grid lg:grid-cols-2 gap-6 mb-8">
+            {alerts.length > 0 && (
+              <div>
+                <h3 className="font-display font-bold mb-3 flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-orange-500" /> Waste Alerts
+                </h3>
+                <div className="space-y-2">
+                  {alerts.map((alert, i) => (
+                    <div key={i} className="glass rounded-xl p-4 text-sm border-l-4 border-orange-400">
+                      {alert}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
+            {insights.length > 0 && (
+              <div>
+                <h3 className="font-display font-bold mb-3 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-ocean-cyan" /> AI FinTech Tips
+                </h3>
+                <div className="space-y-2">
+                  {insights.filter(i => i.type === 'tip' || i.type === 'warning').slice(0, 3).map(ins => (
+                    <div key={ins.id} className="glass-ocean rounded-xl p-4 text-sm">
+                      {ins.text}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -178,6 +208,7 @@ export default function FinTechPage() {
           </div>
         )}
       </main>
+      <OctomindChat />
     </div>
   );
 }

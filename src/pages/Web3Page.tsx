@@ -2,9 +2,10 @@ import { useApp } from '@/contexts/AppContext';
 import Navbar from '@/components/layout/Navbar';
 import { motion } from 'framer-motion';
 import { TIER_COLORS } from '@/types';
-import { Wallet, Coins, Image, ExternalLink, Copy } from 'lucide-react';
+import { Wallet, Coins, Image, ExternalLink, Copy, Shield, LinkIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import OctomindChat from '@/components/chat/OctomindChat';
 
 export default function Web3Page() {
   const { user, badges, tokenLogs } = useApp();
@@ -17,6 +18,9 @@ export default function Web3Page() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const totalMinted = tokenLogs.reduce((s, l) => s + l.amount, 0);
+  const pendingTx = tokenLogs.filter(l => l.txHash.startsWith('0x')).length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -34,15 +38,18 @@ export default function Web3Page() {
               <div className="flex items-center gap-2 mb-4">
                 <Wallet className="h-6 w-6 text-ocean-teal" />
                 <span className="font-display font-bold text-lg">Custodial Wallet</span>
+                <span className="text-[10px] bg-ocean-teal/10 text-ocean-teal px-2 py-0.5 rounded-full font-medium">Testnet</span>
               </div>
               <div className="flex items-center gap-2 mb-4">
                 <code className="text-sm font-mono bg-background/50 px-3 py-1.5 rounded-lg">{user.walletAddress}</code>
                 <Button variant="ghost" size="icon" onClick={copyAddress}>
                   <Copy className="h-4 w-4" />
                 </Button>
-                {copied && <span className="text-xs text-ocean-teal">Copied!</span>}
+                {copied && <span className="text-xs text-ocean-teal animate-fade-in-up">Copied!</span>}
               </div>
-              <p className="text-xs text-muted-foreground">Testnet • Encrypted custodial wallet</p>
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <Shield className="h-3 w-3" /> Encrypted custodial wallet • Testnet chain
+              </p>
             </div>
             <div className="text-right">
               <p className="text-4xl font-display font-black ocean-gradient-text">{user.totalTokens}</p>
@@ -52,13 +59,15 @@ export default function Web3Page() {
         </motion.div>
 
         {/* Token Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Total Earned', value: user.totalTokens },
-            { label: 'Today', value: user.todayTokens },
-            { label: 'NFTs Minted', value: badges.length },
+            { label: 'Total Minted', value: totalMinted, icon: Coins },
+            { label: 'Today', value: user.todayTokens, icon: Coins },
+            { label: 'NFTs Minted', value: badges.length, icon: Image },
+            { label: 'Transactions', value: tokenLogs.length, icon: ExternalLink },
           ].map(s => (
             <div key={s.label} className="glass rounded-2xl p-5 text-center">
+              <s.icon className="h-4 w-4 mx-auto mb-2 text-ocean-cyan" />
               <p className="text-2xl font-display font-black">{s.value}</p>
               <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
             </div>
@@ -74,17 +83,21 @@ export default function Web3Page() {
             {badges.map((badge, i) => (
               <motion.div
                 key={badge.id}
-                className={`rounded-2xl p-6 text-center bg-gradient-to-br ${TIER_COLORS[badge.tier]} text-primary-foreground shadow-lg`}
+                className={`rounded-2xl p-6 text-center bg-gradient-to-br ${TIER_COLORS[badge.tier]} text-primary-foreground shadow-lg relative overflow-hidden`}
                 initial={{ scale: 0, rotate: -10 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: 'spring', delay: i * 0.1 }}
+                whileHover={{ scale: 1.03, y: -4 }}
               >
-                <p className="text-4xl mb-3">🏅</p>
-                <p className="font-bold text-sm">{badge.name}</p>
-                <p className="text-xs opacity-80 mt-1">{badge.description}</p>
-                <div className="mt-3 text-xs opacity-70">
-                  <p>{badge.tier.toUpperCase()}</p>
-                  <p className="font-mono mt-1">{badge.tokenId.slice(0, 16)}...</p>
+                {/* Glow effect */}
+                <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity rounded-2xl" />
+                <p className="text-4xl mb-3 relative">🏅</p>
+                <p className="font-bold text-sm relative">{badge.name}</p>
+                <p className="text-xs opacity-80 mt-1 relative">{badge.description}</p>
+                <div className="mt-3 text-xs opacity-70 relative">
+                  <p className="font-semibold">{badge.tier.toUpperCase()}</p>
+                  <p className="font-mono mt-1 text-[10px]">{badge.tokenId.slice(0, 16)}...</p>
+                  <p className="text-[10px] mt-0.5">{badge.earnedAt.toLocaleDateString()}</p>
                 </div>
               </motion.div>
             ))}
@@ -104,9 +117,12 @@ export default function Web3Page() {
         <div className="glass rounded-2xl divide-y divide-border/50">
           {tokenLogs.slice(0, 15).map(log => (
             <div key={log.id} className="flex items-center justify-between p-4">
-              <div>
-                <p className="text-sm font-medium">+{log.amount} ImpactTokens</p>
-                <p className="text-xs text-muted-foreground">{log.actionType.replace(/-/g, ' ')}</p>
+              <div className="flex items-center gap-3">
+                <span className={`w-2 h-2 rounded-full ${log.nftIssued ? 'bg-ocean-cyan' : 'bg-ocean-green'}`} />
+                <div>
+                  <p className="text-sm font-medium">+{log.amount} ImpactTokens{log.nftIssued ? ' + NFT' : ''}</p>
+                  <p className="text-xs text-muted-foreground">{log.actionType.replace(/-/g, ' ')}</p>
+                </div>
               </div>
               <div className="text-right">
                 <p className="text-xs font-mono text-muted-foreground">{log.txHash.slice(0, 14)}...</p>
@@ -119,6 +135,7 @@ export default function Web3Page() {
           )}
         </div>
       </main>
+      <OctomindChat />
     </div>
   );
 }
