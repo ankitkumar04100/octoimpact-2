@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import Navbar from '@/components/layout/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,13 +10,14 @@ import StatsRow from '@/components/dashboard/StatsRow';
 import EcoScoreChart from '@/components/dashboard/EcoScoreChart';
 import MultiplierPanel from '@/components/dashboard/MultiplierPanel';
 import DAOPreview from '@/components/dashboard/DAOPreview';
+import SubDashboard from '@/components/dashboard/SubDashboard';
 import OctomindChat from '@/components/chat/OctomindChat';
 
 const CHART_COLORS = ['#0d9488', '#06b6d4', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444'];
 const fade = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
 
 export default function Dashboard() {
-  const { user, actions, insights, badges, tokenLogs, achievements, proposals, fetchAIInsights, authMode, vote } = useApp();
+  const { user, actions, insights, badges, tokenLogs, achievements, proposals, transactions, fetchAIInsights, authMode, vote } = useApp();
   const [aiLoading, setAiLoading] = useState(false);
 
   const carbonData = useMemo(() => {
@@ -24,12 +25,6 @@ export default function Dashboard() {
     for (const a of actions) cats[a.category] = (cats[a.category] || 0) + a.co2Reduced;
     return Object.entries(cats).map(([name, value]) => ({ name, value: Math.round(value * 10) / 10 }));
   }, [actions]);
-
-  useEffect(() => {
-    if (user && authMode !== 'demo' && authMode !== 'guest' && insights.length === 0) {
-      handleFetchAI();
-    }
-  }, [user, authMode]);
 
   const handleFetchAI = async () => {
     setAiLoading(true);
@@ -116,7 +111,6 @@ export default function Dashboard() {
             </div>
           </motion.div>
 
-          {/* Multiplier Panel */}
           <MultiplierPanel user={user} />
 
           {/* Badge Shelf */}
@@ -162,13 +156,12 @@ export default function Dashboard() {
             </div>
           </motion.div>
 
-          {/* DAO Preview */}
           <DAOPreview proposals={proposals} user={user} onVote={vote} />
 
           {/* Achievements */}
-          <motion.div className="lg:col-span-2 glass rounded-2xl p-6" variants={fade} initial="hidden" animate="show" transition={{ delay: 0.4 }}>
+          <motion.div className="lg:col-span-3 glass rounded-2xl p-6" variants={fade} initial="hidden" animate="show" transition={{ delay: 0.4 }}>
             <h3 className="font-display font-bold mb-4">Achievements</h3>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
               {achievements.map(a => (
                 <div key={a.id} className="flex items-center gap-3 glass-ocean rounded-xl p-3">
                   <span className="text-xl">{a.icon}</span>
@@ -184,6 +177,9 @@ export default function Dashboard() {
             </div>
           </motion.div>
         </div>
+
+        {/* Sub-Dashboard / Pro Panels */}
+        <SubDashboard user={user} actions={actions} transactions={transactions} />
       </main>
       <OctomindChat />
     </div>
