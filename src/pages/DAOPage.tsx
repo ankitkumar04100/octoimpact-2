@@ -24,40 +24,25 @@ export default function DAOPage() {
   const [privacyMode, setPrivacyMode] = useState(false);
   const [now, setNow] = useState(Date.now());
 
-  const filteredCompleted = useMemo(() => {
-    if (!searchTerm) return [];
-    return [];
-  }, [searchTerm]);
-
   useEffect(() => {
     const interval = setInterval(() => setNow(Date.now()), 60000);
     return () => clearInterval(interval);
   }, []);
 
-  if (!user) return null;
-
-  const handleCreate = () => {
-    if (!text.trim() || !desc.trim()) return;
-    createProposal(text.trim(), desc.trim(), duration);
-    setText(''); setDesc(''); setShowForm(false);
-  };
-
-  const applyTemplate = (t: typeof PROPOSAL_TEMPLATES[0]) => {
-    setText(t.title);
-    setDesc(t.desc);
-    setShowForm(true);
-  };
-
-  const active = proposals.filter(p => p.status === 'active' && new Date(p.endTime).getTime() > now);
-  const completed = proposals.filter(p => p.status !== 'active' || new Date(p.endTime).getTime() <= now);
-  const votingPower = Math.max(1, Math.floor(user.totalTokens / 10));
-  const votedProposalIds = proposals.filter(p => p.voters.includes(user.id)).map(p => p.id);
+  const active = useMemo(() => proposals.filter(p => p.status === 'active' && new Date(p.endTime).getTime() > now), [proposals, now]);
+  const completed = useMemo(() => proposals.filter(p => p.status !== 'active' || new Date(p.endTime).getTime() <= now), [proposals, now]);
+  const votingPower = user ? Math.max(1, Math.floor(user.totalTokens / 10)) : 1;
+  const votedProposalIds = useMemo(() => user ? proposals.filter(p => p.voters.includes(user.id)).map(p => p.id) : [], [proposals, user]);
 
   const filteredCompleted = useMemo(() => {
     if (!searchTerm) return completed;
     const lower = searchTerm.toLowerCase();
     return completed.filter(p => p.text.toLowerCase().includes(lower) || p.description.toLowerCase().includes(lower));
   }, [completed, searchTerm]);
+
+  const participationRate = proposals.length > 0 ? Math.round((votedProposalIds.length / proposals.length) * 100) : 0;
+
+  if (!user) return null;
 
   // Governance metrics
   const participationRate = proposals.length > 0 ? Math.round((votedProposalIds.length / proposals.length) * 100) : 0;
