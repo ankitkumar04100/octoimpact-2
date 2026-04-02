@@ -3,8 +3,15 @@ import { useApp } from '@/contexts/AppContext';
 import Navbar from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Vote, Plus, Clock, CheckCircle, ThumbsUp, ThumbsDown, Info, Search, EyeOff, Eye } from 'lucide-react';
+import { Vote, Plus, Clock, CheckCircle, ThumbsUp, ThumbsDown, Info, Search, EyeOff, Eye, BarChart3, FileText } from 'lucide-react';
 import OctomindChat from '@/components/chat/OctomindChat';
+
+const PROPOSAL_TEMPLATES = [
+  { title: 'Add new action type', desc: 'Propose adding a new sustainability action to the platform catalog.' },
+  { title: 'Adjust reward weights', desc: 'Propose changes to token reward multipliers for specific action categories.' },
+  { title: 'New badge milestone', desc: 'Propose a new badge milestone and the criteria to earn it.' },
+  { title: 'New challenge', desc: 'Propose a new weekly or monthly community challenge.' },
+];
 
 export default function DAOPage() {
   const { user, proposals, createProposal, vote } = useApp();
@@ -17,7 +24,6 @@ export default function DAOPage() {
   const [privacyMode, setPrivacyMode] = useState(false);
   const [now, setNow] = useState(Date.now());
 
-  // Live countdown timer
   useEffect(() => {
     const interval = setInterval(() => setNow(Date.now()), 60000);
     return () => clearInterval(interval);
@@ -31,6 +37,12 @@ export default function DAOPage() {
     setText(''); setDesc(''); setShowForm(false);
   };
 
+  const applyTemplate = (t: typeof PROPOSAL_TEMPLATES[0]) => {
+    setText(t.title);
+    setDesc(t.desc);
+    setShowForm(true);
+  };
+
   const active = proposals.filter(p => p.status === 'active' && new Date(p.endTime).getTime() > now);
   const completed = proposals.filter(p => p.status !== 'active' || new Date(p.endTime).getTime() <= now);
   const votingPower = Math.max(1, Math.floor(user.totalTokens / 10));
@@ -41,6 +53,9 @@ export default function DAOPage() {
     const lower = searchTerm.toLowerCase();
     return completed.filter(p => p.text.toLowerCase().includes(lower) || p.description.toLowerCase().includes(lower));
   }, [completed, searchTerm]);
+
+  // Governance metrics
+  const participationRate = proposals.length > 0 ? Math.round((votedProposalIds.length / proposals.length) * 100) : 0;
 
   const formatTime = (endTime: Date) => {
     const ms = new Date(endTime).getTime() - now;
@@ -73,24 +88,58 @@ export default function DAOPage() {
           </div>
         </div>
 
-        {/* How it works */}
-        <div className="glass-ocean rounded-2xl p-4 mb-6 flex items-start gap-3">
-          <Info className="h-4 w-4 text-ocean-teal mt-0.5 shrink-0" />
-          <div className="text-xs text-muted-foreground">
-            <p><strong className="text-foreground">Voting Power = OCTI Balance ÷ 10</strong></p>
-            <p className="mt-1">Your tokens directly influence governance outcomes. Double voting is prevented. Proposals auto-finalize at end time.</p>
-            {privacyMode && <p className="mt-1 text-ocean-teal font-medium">🔒 Privacy mode ON — identities are masked in the UI. Token weighting remains intact.</p>}
+        {/* --- Section: Overview --- */}
+        <section className="mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="glass rounded-2xl p-5 text-center">
+              <p className="text-2xl font-display font-black ocean-gradient-text">{votingPower}</p>
+              <p className="text-xs text-muted-foreground">Your Vote Power</p>
+            </div>
+            <div className="glass rounded-2xl p-5 text-center">
+              <p className="text-2xl font-display font-black">{active.length}</p>
+              <p className="text-xs text-muted-foreground">Active Proposals</p>
+            </div>
+            <div className="glass rounded-2xl p-5 text-center">
+              <p className="text-2xl font-display font-black">{participationRate}%</p>
+              <p className="text-xs text-muted-foreground">Participation</p>
+            </div>
+            <div className="glass rounded-2xl p-5 text-center">
+              <p className="text-2xl font-display font-black">{votedProposalIds.length}</p>
+              <p className="text-xs text-muted-foreground">Your Votes</p>
+            </div>
           </div>
-        </div>
+        </section>
 
-        {/* Voting Power */}
-        <div className="glass-ocean rounded-2xl p-5 mb-8 flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium">Your Voting Power</p>
-            <p className="text-xs text-muted-foreground">Based on {user.totalTokens} ImpactTokens (1 vote per 10 tokens)</p>
+        {/* How it works */}
+        <section className="mb-8">
+          <div className="glass-ocean rounded-2xl p-4 flex items-start gap-3">
+            <Info className="h-4 w-4 text-ocean-teal mt-0.5 shrink-0" />
+            <div className="text-xs text-muted-foreground">
+              <p><strong className="text-foreground">Voting Power = OCTI Balance ÷ 10</strong></p>
+              <p className="mt-1">Your tokens directly influence governance outcomes. Double voting is prevented. Proposals auto-finalize at end time.</p>
+              {privacyMode && <p className="mt-1 text-ocean-teal font-medium">🔒 Privacy mode ON — identities are masked in the UI. Token weighting remains intact.</p>}
+            </div>
           </div>
-          <p className="text-3xl font-display font-black ocean-gradient-text">{votingPower}</p>
-        </div>
+        </section>
+
+        {/* --- Section: Templates --- */}
+        <section className="mb-8">
+          <h2 className="text-lg font-display font-bold mb-4 flex items-center gap-2">
+            <FileText className="h-5 w-5 text-ocean-cyan" /> Proposal Templates
+          </h2>
+          <div className="grid grid-cols-2 gap-3">
+            {PROPOSAL_TEMPLATES.map(t => (
+              <button
+                key={t.title}
+                onClick={() => applyTemplate(t)}
+                className="glass rounded-xl p-4 text-left card-hover"
+              >
+                <p className="text-sm font-semibold">{t.title}</p>
+                <p className="text-[10px] text-muted-foreground mt-1">{t.desc}</p>
+              </button>
+            ))}
+          </div>
+        </section>
 
         {/* Create Form */}
         <AnimatePresence>
@@ -140,73 +189,75 @@ export default function DAOPage() {
         </AnimatePresence>
 
         {/* Active Proposals */}
-        <h2 className="text-xl font-display font-bold mb-4 flex items-center gap-2">
-          <Clock className="h-5 w-5 text-ocean-cyan" /> Active Proposals ({active.length})
-        </h2>
-        {active.length > 0 ? (
-          <div className="space-y-4 mb-10">
-            {active.map(p => {
-              const total = p.yesVotes + p.noVotes;
-              const yesPct = total > 0 ? (p.yesVotes / total) * 100 : 50;
-              const hasVoted = p.voters.includes(user.id);
+        <section className="mb-8">
+          <h2 className="text-lg font-display font-bold mb-4 flex items-center gap-2">
+            <Clock className="h-5 w-5 text-ocean-cyan" /> Active Proposals ({active.length})
+          </h2>
+          {active.length > 0 ? (
+            <div className="space-y-4">
+              {active.map(p => {
+                const total = p.yesVotes + p.noVotes;
+                const yesPct = total > 0 ? (p.yesVotes / total) * 100 : 50;
+                const hasVoted = p.voters.includes(user.id);
 
-              return (
-                <motion.div key={p.id} className="glass rounded-2xl p-6" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="font-bold">{p.text}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">{p.description}</p>
-                    </div>
-                    <span className="text-xs bg-ocean-teal/10 text-ocean-teal px-2.5 py-1 rounded-full font-medium flex items-center gap-1 shrink-0">
-                      <Clock className="h-3 w-3" /> {formatTime(p.endTime)}
-                    </span>
-                  </div>
-
-                  <div className="h-4 rounded-full bg-muted overflow-hidden mb-2 relative">
-                    <motion.div className="h-full bg-ocean-green rounded-full" initial={{ width: 0 }} animate={{ width: `${yesPct}%` }} transition={{ duration: 0.5 }} />
-                    {total > 0 && (
-                      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-foreground/70">
-                        {Math.round(yesPct)}% YES
+                return (
+                  <motion.div key={p.id} className="glass rounded-2xl p-6" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="font-bold">{p.text}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">{p.description}</p>
+                      </div>
+                      <span className="text-xs bg-ocean-teal/10 text-ocean-teal px-2.5 py-1 rounded-full font-medium flex items-center gap-1 shrink-0">
+                        <Clock className="h-3 w-3" /> {formatTime(p.endTime)}
                       </span>
-                    )}
-                  </div>
-                  <div className="flex justify-between text-xs text-muted-foreground mb-4">
-                    <span>👍 {p.yesVotes} yes ({total > 0 ? Math.round(yesPct) : 0}%)</span>
-                    <span>👎 {p.noVotes} no ({total > 0 ? Math.round(100 - yesPct) : 0}%)</span>
-                  </div>
-
-                  {!hasVoted ? (
-                    <div className="flex gap-2">
-                      <Button variant="ocean" size="sm" onClick={() => vote(p.id, 'yes')} className="gap-1.5">
-                        <ThumbsUp className="h-4 w-4" /> Vote Yes ({votingPower})
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => vote(p.id, 'no')} className="gap-1.5">
-                        <ThumbsDown className="h-4 w-4" /> Vote No ({votingPower})
-                      </Button>
                     </div>
-                  ) : (
-                    <p className="text-sm text-ocean-teal font-medium flex items-center gap-1">
-                      <CheckCircle className="h-4 w-4" /> You voted on this proposal (weight: {votingPower})
+
+                    <div className="h-4 rounded-full bg-muted overflow-hidden mb-2 relative">
+                      <motion.div className="h-full bg-ocean-green rounded-full" initial={{ width: 0 }} animate={{ width: `${yesPct}%` }} transition={{ duration: 0.5 }} />
+                      {total > 0 && (
+                        <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-foreground/70">
+                          {Math.round(yesPct)}% YES
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex justify-between text-xs text-muted-foreground mb-4">
+                      <span>👍 {p.yesVotes} yes ({total > 0 ? Math.round(yesPct) : 0}%)</span>
+                      <span>👎 {p.noVotes} no ({total > 0 ? Math.round(100 - yesPct) : 0}%)</span>
+                    </div>
+
+                    {!hasVoted ? (
+                      <div className="flex gap-2">
+                        <Button variant="ocean" size="sm" onClick={() => vote(p.id, 'yes')} className="gap-1.5">
+                          <ThumbsUp className="h-4 w-4" /> Vote Yes ({votingPower})
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => vote(p.id, 'no')} className="gap-1.5">
+                          <ThumbsDown className="h-4 w-4" /> Vote No ({votingPower})
+                        </Button>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-ocean-teal font-medium flex items-center gap-1">
+                        <CheckCircle className="h-4 w-4" /> You voted on this proposal (weight: {votingPower})
+                      </p>
+                    )}
+                    <p className="text-xs text-muted-foreground mt-2">
+                      By {privacyMode ? 'Anonymous' : p.createdBy} • {new Date(p.createdAt).toLocaleDateString()}
                     </p>
-                  )}
-                  <p className="text-xs text-muted-foreground mt-2">
-                    By {privacyMode ? 'Anonymous' : p.createdBy} • {new Date(p.createdAt).toLocaleDateString()}
-                  </p>
-                </motion.div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="glass rounded-2xl p-8 text-center mb-10">
-            <Vote className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
-            <p className="text-muted-foreground">No active proposals. Create one to get started!</p>
-          </div>
-        )}
+                  </motion.div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="glass rounded-2xl p-8 text-center">
+              <Vote className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
+              <p className="text-muted-foreground">No active proposals. Create one to get started!</p>
+            </div>
+          )}
+        </section>
 
         {/* Your Votes */}
         {votedProposalIds.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-xl font-display font-bold mb-4">Your Votes ({votedProposalIds.length})</h2>
+          <section className="mb-8">
+            <h2 className="text-lg font-display font-bold mb-4">Your Votes ({votedProposalIds.length})</h2>
             <div className="space-y-2">
               {proposals.filter(p => votedProposalIds.includes(p.id)).map(p => (
                 <div key={p.id} className="glass rounded-xl p-4 flex items-center justify-between">
@@ -218,14 +269,14 @@ export default function DAOPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
         {/* Completed */}
         {completed.length > 0 && (
-          <>
+          <section className="mb-8">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-display font-bold">Completed ({completed.length})</h2>
+              <h2 className="text-lg font-display font-bold">Completed ({completed.length})</h2>
               {completed.length > 3 && (
                 <div className="relative">
                   <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
@@ -258,7 +309,7 @@ export default function DAOPage() {
                 );
               })}
             </div>
-          </>
+          </section>
         )}
       </main>
       <OctomindChat />
