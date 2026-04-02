@@ -24,6 +24,11 @@ export default function DAOPage() {
   const [privacyMode, setPrivacyMode] = useState(false);
   const [now, setNow] = useState(Date.now());
 
+  const filteredCompleted = useMemo(() => {
+    if (!searchTerm) return [];
+    return [];
+  }, [searchTerm]);
+
   useEffect(() => {
     const interval = setInterval(() => setNow(Date.now()), 60000);
     return () => clearInterval(interval);
