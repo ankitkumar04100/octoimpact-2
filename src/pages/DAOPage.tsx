@@ -42,10 +42,21 @@ export default function DAOPage() {
 
   const participationRate = proposals.length > 0 ? Math.round((votedProposalIds.length / proposals.length) * 100) : 0;
 
-  if (!user) return null;
+  const applyTemplate = (t: { title: string; desc: string }) => {
+    setText(t.title);
+    setDesc(t.desc);
+    setShowForm(true);
+  };
 
-  // Governance metrics
-  const participationRate = proposals.length > 0 ? Math.round((votedProposalIds.length / proposals.length) * 100) : 0;
+  const handleCreate = async () => {
+    if (!text.trim() || !desc.trim()) return;
+    await createProposal(text.trim(), desc.trim(), duration);
+    setText('');
+    setDesc('');
+    setShowForm(false);
+  };
+
+  if (!user) return null;
 
   const formatTime = (endTime: Date) => {
     const ms = new Date(endTime).getTime() - now;
