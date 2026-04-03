@@ -50,7 +50,7 @@ export default function DAOPage() {
 
   const handleCreate = async () => {
     if (!text.trim() || !desc.trim()) return;
-    await createProposal(text.trim(), duration * 24);
+    await createProposal(text.trim(), desc.trim(), duration);
     setText('');
     setDesc('');
     setShowForm(false);
