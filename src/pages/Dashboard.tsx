@@ -61,6 +61,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
+      <ConfettiBurst trigger={confetti} />
       <Navbar />
       <main className="pt-20 pb-12 px-4 max-w-5xl mx-auto">
         {/* Sticky Section Nav (desktop) */}
