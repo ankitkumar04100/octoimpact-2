@@ -14,6 +14,8 @@ import Web3Page from "./pages/Web3Page";
 import DAOPage from "./pages/DAOPage";
 import AuthPage from "./pages/AuthPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import ProfilePage from "./pages/ProfilePage";
+import ReportsPage from "./pages/ReportsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
