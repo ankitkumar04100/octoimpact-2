@@ -34,6 +34,8 @@ function AnimatedRoutes() {
           <Route path="/fintech" element={<FinTechPage />} />
           <Route path="/web3" element={<Web3Page />} />
           <Route path="/dao" element={<DAOPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/reports" element={<ReportsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </PageTransition>
