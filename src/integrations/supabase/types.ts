@@ -98,6 +98,41 @@ export type Database = {
         }
         Relationships: []
       }
+      dao_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          proposal_id: string
+          user_id: string
+          user_name: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          proposal_id: string
+          user_id: string
+          user_name?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          proposal_id?: string
+          user_id?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dao_comments_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       insights: {
         Row: {
           generated_by: string
@@ -120,6 +155,36 @@ export type Database = {
           id?: string
           text?: string
           timestamp?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean
+          title?: string
           type?: string
           user_id?: string
         }
@@ -280,6 +345,48 @@ export type Database = {
           date?: string
           description?: string
           id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          constraints: Json
+          created_at: string
+          goals: string[]
+          id: string
+          locale: string
+          notification_digest: boolean
+          octomind_persona: string
+          octomind_verbosity: string
+          timezone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          constraints?: Json
+          created_at?: string
+          goals?: string[]
+          id?: string
+          locale?: string
+          notification_digest?: boolean
+          octomind_persona?: string
+          octomind_verbosity?: string
+          timezone?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          constraints?: Json
+          created_at?: string
+          goals?: string[]
+          id?: string
+          locale?: string
+          notification_digest?: boolean
+          octomind_persona?: string
+          octomind_verbosity?: string
+          timezone?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []

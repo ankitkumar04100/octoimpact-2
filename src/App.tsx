@@ -14,6 +14,8 @@ import Web3Page from "./pages/Web3Page";
 import DAOPage from "./pages/DAOPage";
 import AuthPage from "./pages/AuthPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import ProfilePage from "./pages/ProfilePage";
+import ReportsPage from "./pages/ReportsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +34,8 @@ function AnimatedRoutes() {
           <Route path="/fintech" element={<FinTechPage />} />
           <Route path="/web3" element={<Web3Page />} />
           <Route path="/dao" element={<DAOPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/reports" element={<ReportsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </PageTransition>
