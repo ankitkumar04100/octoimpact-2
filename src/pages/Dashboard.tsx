@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import Navbar from '@/components/layout/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
