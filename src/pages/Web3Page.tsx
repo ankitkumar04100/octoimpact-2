@@ -188,11 +188,11 @@ export default function Web3Page() {
               {badges.map((badge, i) => (
                 <motion.div
                   key={badge.id}
-                  className={`rounded-2xl p-6 bg-gradient-to-br ${TIER_COLORS[badge.tier]} text-primary-foreground shadow-lg relative overflow-hidden`}
+                  className={`rounded-2xl p-6 bg-gradient-to-br ${TIER_COLORS[badge.tier]} text-primary-foreground shadow-lg relative overflow-hidden nft-card-spring`}
                   initial={{ scale: 0, rotate: -10 }}
                   animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: 'spring', delay: i * 0.1 }}
-                  whileHover={{ scale: 1.03, y: -4 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 20, delay: i * 0.1 }}
+                  whileHover={{ scale: 1.05, y: -6, rotateY: 5 }}
                 >
                   <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity rounded-2xl" />
                   <p className="text-4xl mb-3 relative">🏅</p>

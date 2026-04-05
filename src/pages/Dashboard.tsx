@@ -65,6 +65,9 @@ export default function Dashboard() {
           ))}
         </div>
 
+        {/* AI Ticker */}
+        <AITicker />
+
         {/* Section: Overview */}
         <section id="overview" className="mb-8">
           <SectionHeader title="Overview" subtitle="Your sustainability command center" id="overview" collapsed={collapsed.overview} onToggle={() => toggle('overview')} />

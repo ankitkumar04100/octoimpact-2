@@ -104,7 +104,30 @@
   }
   .card-hover:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 40px -12px hsl(var(--ocean-teal) / 0.2);
+    box-shadow:
+      0 12px 40px -12px hsl(var(--ocean-teal) / 0.2),
+      0 0 20px -4px hsl(var(--ocean-glow) / 0.15);
+  }
+
+  .ocean-glow-hover {
+    transition: box-shadow 0.3s ease, transform 0.24s ease;
+  }
+  .ocean-glow-hover:hover {
+    box-shadow:
+      0 0 24px hsl(var(--ocean-teal) / 0.2),
+      0 0 60px hsl(var(--ocean-glow) / 0.1),
+      0 8px 32px -8px hsl(var(--ocean-teal) / 0.15);
+    transform: translateY(-2px);
+  }
+
+  .nft-card-spring {
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  }
+  .nft-card-spring:hover {
+    transform: scale(1.04) translateY(-6px);
+    box-shadow:
+      0 16px 48px -12px hsl(var(--ocean-teal) / 0.25),
+      0 0 30px hsl(var(--ocean-glow) / 0.15);
   }
 }
 
