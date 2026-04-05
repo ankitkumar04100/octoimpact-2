@@ -33,6 +33,16 @@ export default function Dashboard() {
   const { user, actions, insights, badges, tokenLogs, achievements, proposals, transactions, fetchAIInsights, vote } = useApp();
   const [aiLoading, setAiLoading] = useState(false);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [confetti, setConfetti] = useState(false);
+  const prevBadgeCount = useRef(badges.length);
+
+  useEffect(() => {
+    if (badges.length > prevBadgeCount.current) {
+      setConfetti(true);
+      setTimeout(() => setConfetti(false), 100);
+    }
+    prevBadgeCount.current = badges.length;
+  }, [badges.length]);
 
   const carbonData = useMemo(() => {
     const cats: Record<string, number> = {};
