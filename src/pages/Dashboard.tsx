@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import Navbar from '@/components/layout/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,6 +13,8 @@ import DAOPreview from '@/components/dashboard/DAOPreview';
 import ImpactOverview from '@/components/dashboard/ImpactOverview';
 import BadgeCollections from '@/components/dashboard/BadgeCollections';
 import SubDashboard from '@/components/dashboard/SubDashboard';
+import AITicker from '@/components/dashboard/AITicker';
+import ConfettiBurst from '@/components/animations/ConfettiBurst';
 import OctomindChat from '@/components/chat/OctomindChat';
 
 const CHART_COLORS = ['#0d9488', '#06b6d4', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444'];
@@ -31,6 +33,16 @@ export default function Dashboard() {
   const { user, actions, insights, badges, tokenLogs, achievements, proposals, transactions, fetchAIInsights, vote } = useApp();
   const [aiLoading, setAiLoading] = useState(false);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [confetti, setConfetti] = useState(false);
+  const prevBadgeCount = useRef(badges.length);
+
+  useEffect(() => {
+    if (badges.length > prevBadgeCount.current) {
+      setConfetti(true);
+      setTimeout(() => setConfetti(false), 100);
+    }
+    prevBadgeCount.current = badges.length;
+  }, [badges.length]);
 
   const carbonData = useMemo(() => {
     const cats: Record<string, number> = {};
@@ -49,6 +61,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
+      <ConfettiBurst trigger={confetti} />
       <Navbar />
       <main className="pt-20 pb-12 px-4 max-w-5xl mx-auto">
         {/* Sticky Section Nav (desktop) */}
@@ -63,6 +76,9 @@ export default function Dashboard() {
             </a>
           ))}
         </div>
+
+        {/* AI Ticker */}
+        <AITicker />
 
         {/* Section: Overview */}
         <section id="overview" className="mb-8">
