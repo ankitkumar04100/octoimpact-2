@@ -244,6 +244,7 @@ export default function DAOPage() {
                     <p className="text-xs text-muted-foreground mt-2">
                       By {privacyMode ? 'Anonymous' : p.createdBy} • {new Date(p.createdAt).toLocaleDateString()}
                     </p>
+                    <DAOComments proposalId={p.id} />
                   </motion.div>
                 );
               })}
