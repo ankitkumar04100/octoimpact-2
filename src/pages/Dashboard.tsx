@@ -13,6 +13,7 @@ import DAOPreview from '@/components/dashboard/DAOPreview';
 import ImpactOverview from '@/components/dashboard/ImpactOverview';
 import BadgeCollections from '@/components/dashboard/BadgeCollections';
 import SubDashboard from '@/components/dashboard/SubDashboard';
+import AITicker from '@/components/dashboard/AITicker';
 import OctomindChat from '@/components/chat/OctomindChat';
 
 const CHART_COLORS = ['#0d9488', '#06b6d4', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444'];
