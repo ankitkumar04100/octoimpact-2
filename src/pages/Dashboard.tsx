@@ -225,6 +225,7 @@ export default function Dashboard() {
         </section>
       </main>
       <OctomindChat />
+      <GuidedTour steps={DASHBOARD_TOUR} tourKey="dashboard" />
     </div>
   );
 }

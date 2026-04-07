@@ -264,6 +264,7 @@ export default function Web3Page() {
         </section>
       </main>
       <OctomindChat />
+      <GuidedTour steps={WEB3_TOUR} tourKey="web3" />
     </div>
   );
 }

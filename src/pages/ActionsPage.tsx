@@ -354,6 +354,7 @@ export default function ActionsPage() {
         </section>
       </main>
       <OctomindChat />
+      <GuidedTour steps={ACTIONS_TOUR} tourKey="actions" />
     </div>
   );
 }

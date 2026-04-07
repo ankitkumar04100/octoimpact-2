@@ -316,6 +316,7 @@ export default function DAOPage() {
         )}
       </main>
       <OctomindChat />
+      <GuidedTour steps={DAO_TOUR} tourKey="dao" />
     </div>
   );
 }
