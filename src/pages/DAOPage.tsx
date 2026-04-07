@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Vote, Plus, Clock, CheckCircle, ThumbsUp, ThumbsDown, Info, Search, EyeOff, Eye, BarChart3, FileText } from 'lucide-react';
 import OctomindChat from '@/components/chat/OctomindChat';
 import DAOComments from '@/components/dao/DAOComments';
+import GuidedTour from '@/components/tours/GuidedTour';
+import { DAO_TOUR } from '@/components/tours/tourSteps';
 
 const PROPOSAL_TEMPLATES = [
   { title: 'Add new action type', desc: 'Propose adding a new sustainability action to the platform catalog.' },

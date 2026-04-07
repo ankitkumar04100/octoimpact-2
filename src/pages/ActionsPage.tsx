@@ -7,6 +7,8 @@ import { ACTION_TYPES } from '@/types';
 import { computeActionImpact } from '@/engines/sustainability';
 import { Check, Sparkles, Flame, Undo2, Plus, X, Filter, Clock, Gauge } from 'lucide-react';
 import OctomindChat from '@/components/chat/OctomindChat';
+import GuidedTour from '@/components/tours/GuidedTour';
+import { ACTIONS_TOUR } from '@/components/tours/tourSteps';
 
 const ACTION_DIFFICULTY: Record<string, { time: string; difficulty: 'Easy' | 'Medium' | 'Hard' }> = {
   'public-transport': { time: '30-60 min', difficulty: 'Easy' },
