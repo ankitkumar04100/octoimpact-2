@@ -208,6 +208,8 @@ export default function Dashboard() {
           )}
         </section>
 
+        <div className="tentacle-divider my-2" />
+
         {/* Section: Badges */}
         <section id="badges" className="mb-8">
           <SectionHeader title="Badges & Achievements" subtitle="Your NFT badge collection and progress milestones" id="badges" collapsed={collapsed.badges} onToggle={() => toggle('badges')} />
