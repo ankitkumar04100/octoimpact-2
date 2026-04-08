@@ -228,6 +228,8 @@ export default function Dashboard() {
           )}
         </section>
 
+        <div className="tentacle-divider my-2" />
+
         {/* Section: Pro Panels */}
         <section id="pro" className="mb-8">
           <SectionHeader title="Pro Panels" subtitle="Advanced analytics, challenges, and category deep dives" id="pro" collapsed={collapsed.pro} onToggle={() => toggle('pro')} />
