@@ -26,7 +26,7 @@ export default function StatsRow({ user }: StatsRowProps) {
       variants={{ show: { transition: { staggerChildren: 0.06 } } }}
     >
       {stats.map(s => (
-        <motion.div key={s.label} variants={fade} className="glass rounded-2xl p-5 card-hover">
+        <motion.div key={s.label} variants={fade} className="glass rounded-2xl p-5 card-hover pulse-glow">
           <div className="flex items-center gap-2 mb-2">
             <s.icon className={`h-5 w-5 ${s.color}`} />
             <span className="text-xs text-muted-foreground font-medium">{s.label}</span>
