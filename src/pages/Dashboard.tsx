@@ -218,6 +218,8 @@ export default function Dashboard() {
           )}
         </section>
 
+        <div className="tentacle-divider my-2" />
+
         {/* Section: Governance */}
         <section id="governance" className="mb-8">
           <SectionHeader title="Governance" subtitle="DAO proposals and token-weighted voting" id="governance" collapsed={collapsed.governance} onToggle={() => toggle('governance')} />
