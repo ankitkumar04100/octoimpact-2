@@ -428,6 +428,50 @@ export default function FinTechPage() {
           </section>
         )}
 
+        {/* --- Section: Finance-to-Action Bridge --- */}
+        {topCarbonMerchants.length > 0 && (
+          <section className="mb-8">
+            <h2 className="text-lg font-display font-bold mb-4 flex items-center gap-2">
+              <ArrowRight className="h-5 w-5 text-ocean-teal" /> Finance → Action Bridge
+            </h2>
+            <div className="glass rounded-2xl p-6 ocean-glow-hover">
+              <p className="text-xs text-muted-foreground mb-4">Your top carbon-heavy spending patterns mapped to suggested sustainability actions</p>
+              <div className="space-y-4">
+                {topCarbonMerchants.slice(0, 3).map(([merchant, data]) => {
+                  const suggestion = merchant.toLowerCase().includes('delivery') || merchant.toLowerCase().includes('food')
+                    ? { action: 'veg-day', reason: 'Replace delivery meals with home cooking' }
+                    : merchant.toLowerCase().includes('uber') || merchant.toLowerCase().includes('taxi')
+                    ? { action: 'public-transport', reason: 'Switch to public transport or cycling' }
+                    : merchant.toLowerCase().includes('shop') || merchant.toLowerCase().includes('amazon')
+                    ? { action: 'eco-shopping', reason: 'Try eco-friendly alternatives' }
+                    : { action: 'power-saving', reason: 'Offset with energy-saving actions' };
+                  const actionInfo = ACTION_TYPES[suggestion.action];
+                  return (
+                    <div key={merchant} className="glass-ocean rounded-xl p-4 flex items-center gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="w-2 h-2 rounded-full bg-destructive" />
+                          <p className="text-sm font-medium">{merchant}</p>
+                          <span className="text-xs text-destructive font-semibold">${data.spend.toFixed(0)}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">{suggestion.reason}</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <div className="flex items-center gap-1.5 text-ocean-teal">
+                          <ArrowRight className="h-3 w-3" />
+                          <span className="text-lg">{actionInfo?.icon || '🎯'}</span>
+                        </div>
+                        <p className="text-[10px] text-ocean-teal font-medium">{actionInfo?.label || 'Eco Action'}</p>
+                        <p className="text-[10px] text-muted-foreground">+{actionInfo?.baseTokens || 10} tokens est.</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* --- Section: Data Quality --- */}
         <section className="mb-8">
           <h2 className="text-lg font-display font-bold mb-4 flex items-center gap-2">

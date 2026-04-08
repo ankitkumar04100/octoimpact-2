@@ -9,6 +9,7 @@ import { useWallet } from '@/hooks/useWallet';
 import OctomindChat from '@/components/chat/OctomindChat';
 import GuidedTour from '@/components/tours/GuidedTour';
 import { WEB3_TOUR } from '@/components/tours/tourSteps';
+import FloatingParticles from '@/components/animations/FloatingParticles';
 
 const fade = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
 

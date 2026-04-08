@@ -8,6 +8,7 @@ import OctomindChat from '@/components/chat/OctomindChat';
 import DAOComments from '@/components/dao/DAOComments';
 import GuidedTour from '@/components/tours/GuidedTour';
 import { DAO_TOUR } from '@/components/tours/tourSteps';
+import FloatingParticles from '@/components/animations/FloatingParticles';
 
 const PROPOSAL_TEMPLATES = [
   { title: 'Add new action type', desc: 'Propose adding a new sustainability action to the platform catalog.' },
