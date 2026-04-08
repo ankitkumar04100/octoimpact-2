@@ -153,6 +153,8 @@ export default function Dashboard() {
           )}
         </section>
 
+        <div className="tentacle-divider my-2" />
+
         {/* Section: Activity */}
         <section id="activity" className="mb-8">
           <SectionHeader title="Activity" subtitle="Token mints, recent actions, and on-chain events" id="activity" collapsed={collapsed.activity} onToggle={() => toggle('activity')} />
