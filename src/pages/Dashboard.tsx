@@ -27,6 +27,7 @@ const fade = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
 
 const SECTION_NAV = [
   { id: 'overview', label: 'Overview' },
+  { id: 'forecast', label: 'Forecast' },
   { id: 'insights', label: 'Insights' },
   { id: 'activity', label: 'Activity' },
   { id: 'badges', label: 'Badges' },
