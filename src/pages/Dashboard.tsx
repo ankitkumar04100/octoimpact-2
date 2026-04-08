@@ -114,6 +114,8 @@ export default function Dashboard() {
           )}
         </section>
 
+        <div className="tentacle-divider my-2" />
+
         {/* Section: Insights */}
         <section id="insights" className="mb-8">
           <SectionHeader title="AI Insights" subtitle="Context-aware recommendations powered by OCTOMIND" id="insights" collapsed={collapsed.insights} onToggle={() => toggle('insights')} />
