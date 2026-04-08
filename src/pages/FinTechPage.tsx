@@ -145,7 +145,8 @@ export default function FinTechPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      <FloatingParticles />
       <Navbar />
       <main className="pt-20 pb-12 px-4 max-w-5xl mx-auto">
         <motion.h1 className="text-3xl font-display font-black mb-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
