@@ -503,6 +503,7 @@ export default function FinTechPage() {
         )}
       </main>
       <OctomindChat />
+      <GuidedTour steps={FINTECH_TOUR} tourKey="fintech" />
     </div>
   );
 }
