@@ -63,7 +63,8 @@ export default function Dashboard() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      <FloatingParticles />
       <ConfettiBurst trigger={confetti} />
       <Navbar />
       <main className="pt-20 pb-12 px-4 max-w-5xl mx-auto">
