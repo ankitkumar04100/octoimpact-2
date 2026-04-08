@@ -18,6 +18,7 @@ import ConfettiBurst from '@/components/animations/ConfettiBurst';
 import OctomindChat from '@/components/chat/OctomindChat';
 import GuidedTour from '@/components/tours/GuidedTour';
 import { DASHBOARD_TOUR } from '@/components/tours/tourSteps';
+import FloatingParticles from '@/components/animations/FloatingParticles';
 
 const CHART_COLORS = ['#0d9488', '#06b6d4', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444'];
 const fade = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
@@ -62,7 +63,8 @@ export default function Dashboard() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      <FloatingParticles />
       <ConfettiBurst trigger={confetti} />
       <Navbar />
       <main className="pt-20 pb-12 px-4 max-w-5xl mx-auto">
@@ -112,6 +114,8 @@ export default function Dashboard() {
           )}
         </section>
 
+        <div className="tentacle-divider my-2" />
+
         {/* Section: Insights */}
         <section id="insights" className="mb-8">
           <SectionHeader title="AI Insights" subtitle="Context-aware recommendations powered by OCTOMIND" id="insights" collapsed={collapsed.insights} onToggle={() => toggle('insights')} />
@@ -148,6 +152,8 @@ export default function Dashboard() {
             </motion.div>
           )}
         </section>
+
+        <div className="tentacle-divider my-2" />
 
         {/* Section: Activity */}
         <section id="activity" className="mb-8">
@@ -202,6 +208,8 @@ export default function Dashboard() {
           )}
         </section>
 
+        <div className="tentacle-divider my-2" />
+
         {/* Section: Badges */}
         <section id="badges" className="mb-8">
           <SectionHeader title="Badges & Achievements" subtitle="Your NFT badge collection and progress milestones" id="badges" collapsed={collapsed.badges} onToggle={() => toggle('badges')} />
@@ -210,6 +218,8 @@ export default function Dashboard() {
           )}
         </section>
 
+        <div className="tentacle-divider my-2" />
+
         {/* Section: Governance */}
         <section id="governance" className="mb-8">
           <SectionHeader title="Governance" subtitle="DAO proposals and token-weighted voting" id="governance" collapsed={collapsed.governance} onToggle={() => toggle('governance')} />
@@ -217,6 +227,8 @@ export default function Dashboard() {
             <DAOPreview proposals={proposals} user={user} onVote={vote} />
           )}
         </section>
+
+        <div className="tentacle-divider my-2" />
 
         {/* Section: Pro Panels */}
         <section id="pro" className="mb-8">

@@ -8,6 +8,8 @@ import { parseCSVTransactions, getCategoryStats, getWasteAlerts, computeFSI, com
 import { Upload, AlertTriangle, TrendingUp, DollarSign, Leaf, Sparkles, Settings, Calculator, Search, Download, Database, Target } from 'lucide-react';
 import OctomindChat from '@/components/chat/OctomindChat';
 import { Progress } from '@/components/ui/progress';
+import GuidedTour from '@/components/tours/GuidedTour';
+import { FINTECH_TOUR } from '@/components/tours/tourSteps';
 
 const COLORS = ['#0d9488', '#06b6d4', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444'];
 
@@ -503,6 +505,7 @@ export default function FinTechPage() {
         )}
       </main>
       <OctomindChat />
+      <GuidedTour steps={FINTECH_TOUR} tourKey="fintech" />
     </div>
   );
 }

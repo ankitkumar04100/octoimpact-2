@@ -129,6 +129,99 @@
       0 16px 48px -12px hsl(var(--ocean-teal) / 0.25),
       0 0 30px hsl(var(--ocean-glow) / 0.15);
   }
+
+  /* Tentacle divider */
+  .tentacle-divider {
+    position: relative;
+    height: 32px;
+    overflow: hidden;
+  }
+  .tentacle-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      hsl(var(--ocean-teal) / 0.3) 15%,
+      hsl(var(--ocean-cyan) / 0.5) 30%,
+      hsl(var(--ocean-teal) / 0.3) 50%,
+      hsl(var(--ocean-cyan) / 0.5) 70%,
+      hsl(var(--ocean-teal) / 0.3) 85%,
+      transparent 100%
+    );
+  }
+  .tentacle-divider::after {
+    content: '🐙';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    background: hsl(var(--background));
+    padding: 0 8px;
+  }
+
+  /* Pulsing glow for score cards */
+  .pulse-glow {
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+
+  /* Floating particles container */
+  .floating-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .floating-particles .particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    animation: floatParticle 12s ease-in-out infinite;
+  }
+  .floating-particles .particle:nth-child(1) { width: 6px; height: 6px; left: 10%; animation-delay: 0s; background: hsl(var(--ocean-teal) / 0.15); }
+  .floating-particles .particle:nth-child(2) { width: 4px; height: 4px; left: 25%; animation-delay: 2s; background: hsl(var(--ocean-cyan) / 0.12); }
+  .floating-particles .particle:nth-child(3) { width: 8px; height: 8px; left: 40%; animation-delay: 4s; background: hsl(var(--ocean-blue) / 0.1); }
+  .floating-particles .particle:nth-child(4) { width: 5px; height: 5px; left: 55%; animation-delay: 1s; background: hsl(var(--ocean-green) / 0.12); }
+  .floating-particles .particle:nth-child(5) { width: 7px; height: 7px; left: 70%; animation-delay: 3s; background: hsl(var(--ocean-teal) / 0.1); }
+  .floating-particles .particle:nth-child(6) { width: 4px; height: 4px; left: 85%; animation-delay: 5s; background: hsl(var(--ocean-cyan) / 0.15); }
+  .floating-particles .particle:nth-child(7) { width: 6px; height: 6px; left: 5%; animation-delay: 6s; background: hsl(var(--ocean-blue) / 0.12); }
+  .floating-particles .particle:nth-child(8) { width: 5px; height: 5px; left: 92%; animation-delay: 7s; background: hsl(var(--ocean-green) / 0.1); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow:
+      0 0 12px hsl(var(--ocean-teal) / 0.15),
+      0 4px 24px -4px hsl(200 50% 10% / 0.06);
+  }
+  50% {
+    box-shadow:
+      0 0 28px hsl(var(--ocean-teal) / 0.25),
+      0 0 48px hsl(var(--ocean-glow) / 0.12),
+      0 4px 24px -4px hsl(200 50% 10% / 0.06);
+  }
+}
+
+@keyframes floatParticle {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20vh) scale(1);
+    opacity: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

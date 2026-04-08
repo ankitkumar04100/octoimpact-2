@@ -11,35 +11,46 @@ interface Props {
   user: UserProfile;
   badges: Badge[];
   actions: { type: string; category: string }[];
+  voteCount?: number;
 }
 
-const COLLECTIONS = [
+const BADGE_COLLECTIONS = [
   {
     name: 'Streak Collection',
     icon: '🔥',
+    description: 'Earn badges by maintaining daily streaks',
     badgeIds: ['bronze-streak', 'silver-streak', 'gold-streak'],
   },
   {
     name: 'Impact Collection',
     icon: '🌍',
+    description: 'Reach token milestones and long-term impact',
     badgeIds: ['platinum-tokens', 'legendary'],
   },
 ];
 
 const ACHIEVEMENT_COLLECTIONS = [
   {
+    name: 'Impact Collection',
+    icon: '🌱',
+    description: 'Action-based sustainability milestones',
+    achievementIds: ['first-step', 'eco-warrior', 'plastic-free', 'carbon-zero', 'energy-guardian', 'planet-protector'],
+  },
+  {
     name: 'Finance Collection',
     icon: '💰',
-    achievementIds: ['planet-protector'],
+    description: 'Financial sustainability achievements',
+    achievementIds: ['finops-saver'],
   },
   {
     name: 'Governance Collection',
     icon: '🏛️',
-    achievementIds: ['eco-warrior'],
+    description: 'DAO participation milestones',
+    achievementIds: ['dao-steward'],
   },
 ];
 
-export default function BadgeCollections({ user, badges, actions }: Props) {
+export default function BadgeCollections({ user, badges, actions, voteCount = 0 }: Props) {
   const earnedBadgeIds = new Set(badges.map(b => b.id));
 
   const badgeProgress = useMemo(() => {
@@ -54,18 +65,39 @@ export default function BadgeCollections({ user, badges, actions }: Props) {
     return progress;
   }, [user]);
 
+  const achievementProgress = useMemo(() => {
+    const progress: Record<string, { current: number; target: number }> = {};
+    for (const a of ACHIEVEMENTS_CONFIG) {
+      let current = 0;
+      switch (a.id) {
+        case 'first-step': current = Math.min(actions.length, 1); break;
+        case 'eco-warrior': current = Math.min(actions.length, 50); break;
+        case 'plastic-free': current = Math.min(actions.filter(x => x.type === 'no-plastic').length, 7); break;
+        case 'carbon-zero': current = Math.min(user.ecoScore, 80); break;
+        case 'energy-guardian': current = Math.min(actions.filter(x => x.category === 'energy').length, 20); break;
+        case 'planet-protector': current = Math.min(user.totalTokens, 1000); break;
+        case 'finops-saver': current = Math.min(user.fsiScore, 70); break;
+        case 'dao-steward': current = Math.min(voteCount, 10); break;
+      }
+      progress[a.id] = { current, target: a.target };
+    }
+    return progress;
+  }, [user, actions, voteCount]);
+
   return (
     <motion.div className="space-y-8" variants={fade} initial="hidden" animate="show">
       <div className="flex items-center gap-2 mb-2">
         <Award className="h-6 w-6 text-amber-500" />
-        <h2 className="text-xl font-display font-bold">Badge Collections</h2>
+        <h2 className="text-xl font-display font-bold">Badge & Achievement Collections</h2>
       </div>
 
-      {COLLECTIONS.map(col => (
-        <div key={col.name} className="glass rounded-2xl p-6">
-          <h3 className="font-display font-bold mb-4 flex items-center gap-2">
+      {/* NFT Badge Collections */}
+      {BADGE_COLLECTIONS.map(col => (
+        <div key={col.name} className="glass rounded-2xl p-6 ocean-glow-hover">
+          <h3 className="font-display font-bold mb-1 flex items-center gap-2">
             <span className="text-xl">{col.icon}</span> {col.name}
           </h3>
+          <p className="text-xs text-muted-foreground mb-4">{col.description}</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {col.badgeIds.map(bid => {
               const threshold = BADGE_THRESHOLDS.find(t => t.id === bid);
@@ -74,6 +106,7 @@ export default function BadgeCollections({ user, badges, actions }: Props) {
               const prog = badgeProgress[bid];
               const earnedBadge = badges.find(b => b.id === bid);
               const pct = prog ? Math.min((prog.current / prog.target) * 100, 100) : 0;
+              const remaining = prog ? prog.target - prog.current : 0;
 
               return (
                 <motion.div
@@ -107,7 +140,7 @@ export default function BadgeCollections({ user, badges, actions }: Props) {
                         <div className="h-full rounded-full ocean-gradient" style={{ width: `${pct}%` }} />
                       </div>
                       <p className="text-[10px] text-muted-foreground mt-1">
-                        {prog.current}/{prog.target} {prog.label}
+                        {prog.current}/{prog.target} {prog.label} — <span className="font-semibold">{remaining} remaining</span>
                       </p>
                     </div>
                   )}
@@ -129,44 +162,47 @@ export default function BadgeCollections({ user, badges, actions }: Props) {
         </div>
       ))}
 
-      {/* Achievements Grid */}
-      <div className="glass rounded-2xl p-6">
-        <h3 className="font-display font-bold mb-4 flex items-center gap-2">
-          <span className="text-xl">🏆</span> Achievements
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {ACHIEVEMENTS_CONFIG.map(a => {
-            let progress = 0;
-            if (a.id === 'first-step') progress = Math.min(actions.length, 1);
-            else if (a.id === 'eco-warrior') progress = Math.min(actions.length, 50);
-            else if (a.id === 'plastic-free') progress = Math.min(actions.filter(x => x.type === 'no-plastic').length, 7);
-            else if (a.id === 'carbon-zero') progress = Math.min(user.ecoScore, 80);
-            else if (a.id === 'energy-guardian') progress = Math.min(actions.filter(x => x.category === 'energy').length, 20);
-            else if (a.id === 'planet-protector') progress = Math.min(user.totalTokens, 1000);
+      {/* Achievement Collections */}
+      {ACHIEVEMENT_COLLECTIONS.map(col => (
+        <div key={col.name} className="glass rounded-2xl p-6 ocean-glow-hover">
+          <h3 className="font-display font-bold mb-1 flex items-center gap-2">
+            <span className="text-xl">{col.icon}</span> {col.name}
+          </h3>
+          <p className="text-xs text-muted-foreground mb-4">{col.description}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {col.achievementIds.map(aid => {
+              const config = ACHIEVEMENTS_CONFIG.find(a => a.id === aid);
+              if (!config) return null;
+              const prog = achievementProgress[aid];
+              if (!prog) return null;
+              const earned = prog.current >= config.target;
+              const pct = Math.round((prog.current / prog.target) * 100);
+              const remaining = config.target - prog.current;
 
-            const earned = progress >= a.target;
-            const pct = Math.round((progress / a.target) * 100);
-
-            return (
-              <div key={a.id} className={`glass-ocean rounded-xl p-4 ${earned ? 'ring-2 ring-ocean-teal/30' : ''}`}>
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{a.icon}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium ${earned ? 'text-ocean-teal' : ''}`}>
-                      {a.title} {earned && '✅'}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">{a.description}</p>
-                    <div className="h-1.5 rounded-full bg-muted mt-2 overflow-hidden">
-                      <div className="h-full rounded-full ocean-gradient" style={{ width: `${pct}%` }} />
+              return (
+                <div key={aid} className={`glass-ocean rounded-xl p-4 ${earned ? 'ring-2 ring-ocean-teal/30' : ''}`}>
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{config.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm font-medium ${earned ? 'text-ocean-teal' : ''}`}>
+                        {config.title} {earned && '✅'}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">{config.description}</p>
+                      <div className="h-1.5 rounded-full bg-muted mt-2 overflow-hidden">
+                        <div className="h-full rounded-full ocean-gradient" style={{ width: `${pct}%` }} />
+                      </div>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">
+                        {prog.current}/{config.target}
+                        {!earned && <span className="font-semibold ml-1">({remaining} to go)</span>}
+                      </p>
                     </div>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{progress}/{a.target}</p>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
+      ))}
     </motion.div>
   );
 }
