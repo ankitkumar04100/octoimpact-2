@@ -120,6 +120,16 @@ export default function Dashboard() {
 
         <div className="tentacle-divider my-2" />
 
+        {/* Section: Forecast & Anomalies */}
+        <section id="forecast" className="mb-8">
+          <SectionHeader title="Forecast & Anomalies" subtitle="Predictions and pattern detection from your real data" id="forecast" collapsed={collapsed.forecast} onToggle={() => toggle('forecast')} />
+          {!collapsed.forecast && (
+            <ForecastAnomalyPanel user={user} actions={actions} transactions={transactions} />
+          )}
+        </section>
+
+        <div className="tentacle-divider my-2" />
+
         {/* Section: Insights */}
         <section id="insights" className="mb-8">
           <SectionHeader title="AI Insights" subtitle="Context-aware recommendations powered by OCTOMIND" id="insights" collapsed={collapsed.insights} onToggle={() => toggle('insights')} />
