@@ -19,12 +19,15 @@ import OctomindChat from '@/components/chat/OctomindChat';
 import GuidedTour from '@/components/tours/GuidedTour';
 import { DASHBOARD_TOUR } from '@/components/tours/tourSteps';
 import FloatingParticles from '@/components/animations/FloatingParticles';
+import AdvancedKPIs from '@/components/dashboard/AdvancedKPIs';
+import ForecastAnomalyPanel from '@/components/dashboard/ForecastAnomalyPanel';
 
 const CHART_COLORS = ['#0d9488', '#06b6d4', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444'];
 const fade = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
 
 const SECTION_NAV = [
   { id: 'overview', label: 'Overview' },
+  { id: 'forecast', label: 'Forecast' },
   { id: 'insights', label: 'Insights' },
   { id: 'activity', label: 'Activity' },
   { id: 'badges', label: 'Badges' },
@@ -90,6 +93,7 @@ export default function Dashboard() {
           {!collapsed.overview && (
             <div className="space-y-6">
               <StatsRow user={user} />
+              <AdvancedKPIs user={user} actions={actions} transactions={transactions} />
               <ImpactOverview user={user} actions={actions} />
               <div className="grid lg:grid-cols-2 gap-6">
                 <EcoScoreChart actions={actions} />
@@ -111,6 +115,16 @@ export default function Dashboard() {
               </div>
               <MultiplierPanel user={user} />
             </div>
+          )}
+        </section>
+
+        <div className="tentacle-divider my-2" />
+
+        {/* Section: Forecast & Anomalies */}
+        <section id="forecast" className="mb-8">
+          <SectionHeader title="Forecast & Anomalies" subtitle="Predictions and pattern detection from your real data" id="forecast" collapsed={collapsed.forecast} onToggle={() => toggle('forecast')} />
+          {!collapsed.forecast && (
+            <ForecastAnomalyPanel user={user} actions={actions} transactions={transactions} />
           )}
         </section>
 

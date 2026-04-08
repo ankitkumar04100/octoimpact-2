@@ -9,6 +9,7 @@ import { useWallet } from '@/hooks/useWallet';
 import OctomindChat from '@/components/chat/OctomindChat';
 import GuidedTour from '@/components/tours/GuidedTour';
 import { WEB3_TOUR } from '@/components/tours/tourSteps';
+import FloatingParticles from '@/components/animations/FloatingParticles';
 
 const fade = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
 
@@ -39,7 +40,8 @@ export default function Web3Page() {
   const successCount = tokenLogs.length;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      <FloatingParticles />
       <Navbar />
       <main className="pt-20 pb-12 px-4 max-w-5xl mx-auto">
         <motion.h1 className="text-3xl font-display font-black mb-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
