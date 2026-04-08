@@ -93,6 +93,7 @@ export default function Dashboard() {
           {!collapsed.overview && (
             <div className="space-y-6">
               <StatsRow user={user} />
+              <AdvancedKPIs user={user} actions={actions} transactions={transactions} />
               <ImpactOverview user={user} actions={actions} />
               <div className="grid lg:grid-cols-2 gap-6">
                 <EcoScoreChart actions={actions} />
