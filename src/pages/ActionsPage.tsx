@@ -8,6 +8,7 @@ import { computeActionImpact } from '@/engines/sustainability';
 import { Check, Sparkles, Flame, Undo2, Plus, X, Filter, Clock, Gauge } from 'lucide-react';
 import OctomindChat from '@/components/chat/OctomindChat';
 import GuidedTour from '@/components/tours/GuidedTour';
+import ParameterizedLogger, { hasParameters, getParamMultiplier } from '@/components/actions/ParameterizedLogger';
 import { ACTIONS_TOUR } from '@/components/tours/tourSteps';
 
 const ACTION_DIFFICULTY: Record<string, { time: string; difficulty: 'Easy' | 'Medium' | 'Hard' }> = {
@@ -40,6 +41,8 @@ export default function ActionsPage() {
   const [customCategory, setCustomCategory] = useState('lifestyle');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [historyFilter, setHistoryFilter] = useState<string>('all');
+  const [paramAction, setParamAction] = useState<string | null>(null);
+  const [undoStack, setUndoStack] = useState<{ id: string; time: number }[]>([]);
 
   const heatmapData = useMemo(() => {
     const days: { date: string; count: number; day: number; fullDate: string }[] = [];
@@ -91,14 +94,46 @@ export default function ActionsPage() {
   if (!user) return null;
 
   const handleAction = (type: string) => {
+    if (hasParameters(type)) {
+      setParamAction(type);
+      return;
+    }
+    executeAction(type, 1);
+  };
+
+  const executeAction = (type: string, multiplier: number) => {
     const result = computeActionImpact(type, user);
+    const adjustedTokens = Math.round(result.tokens * multiplier);
+    const adjustedCo2 = Number((result.co2 * multiplier).toFixed(1));
     logAction(type);
-    setLastAction({ type, tokens: result.tokens, co2: result.co2, id: `act-${Date.now()}`, time: Date.now() });
+    const actionId = `act-${Date.now()}`;
+    setLastAction({ type, tokens: adjustedTokens, co2: adjustedCo2, id: actionId, time: Date.now() });
+    setUndoStack(prev => [{ id: actionId, time: Date.now() }, ...prev.slice(0, 9)]);
     setTimeout(() => setLastAction(null), 4000);
   };
 
+  const handleParamConfirm = (paramValue: number, multiplier: number) => {
+    if (paramAction) {
+      executeAction(paramAction, multiplier);
+      setParamAction(null);
+    }
+  };
+
+  const canUndo = undoStack.length > 0 && Date.now() - (undoStack[0]?.time || 0) < 300000;
+
   return (
     <div className="min-h-screen bg-background">
+      <AnimatePresence>
+        {paramAction && (
+          <ParameterizedLogger
+            actionType={paramAction}
+            actionLabel={ACTION_TYPES[paramAction]?.label || paramAction}
+            actionIcon={ACTION_TYPES[paramAction]?.icon || '🎯'}
+            onConfirm={handleParamConfirm}
+            onCancel={() => setParamAction(null)}
+          />
+        )}
+      </AnimatePresence>
       <Navbar />
       <main className="pt-20 pb-12 px-4 max-w-5xl mx-auto">
         <motion.h1 className="text-3xl font-display font-black mb-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
