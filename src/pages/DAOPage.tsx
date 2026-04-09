@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Vote, Plus, Clock, CheckCircle, ThumbsUp, ThumbsDown, Info, Search, EyeOff, Eye, BarChart3, FileText } from 'lucide-react';
 import OctomindChat from '@/components/chat/OctomindChat';
 import DAOComments from '@/components/dao/DAOComments';
+import GovernanceAnalytics from '@/components/dao/GovernanceAnalytics';
 import GuidedTour from '@/components/tours/GuidedTour';
 import { DAO_TOUR } from '@/components/tours/tourSteps';
 import FloatingParticles from '@/components/animations/FloatingParticles';
@@ -318,6 +319,9 @@ export default function DAOPage() {
             </div>
           </section>
         )}
+
+        {/* Governance Analytics */}
+        <GovernanceAnalytics proposals={proposals} user={user} />
       </main>
       <OctomindChat />
       <GuidedTour steps={DAO_TOUR} tourKey="dao" />
