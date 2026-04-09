@@ -1,7 +1,8 @@
 import { useApp } from '@/contexts/AppContext';
 import Navbar from '@/components/layout/Navbar';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { TIER_COLORS } from '@/types';
+import type { Badge } from '@/types';
 import { Wallet, Coins, Image, ExternalLink, Copy, Shield, LinkIcon, Info, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
@@ -10,6 +11,7 @@ import OctomindChat from '@/components/chat/OctomindChat';
 import GuidedTour from '@/components/tours/GuidedTour';
 import { WEB3_TOUR } from '@/components/tours/tourSteps';
 import FloatingParticles from '@/components/animations/FloatingParticles';
+import NFTDetailModal from '@/components/web3/NFTDetailModal';
 
 const fade = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } };
 
@@ -17,6 +19,7 @@ export default function Web3Page() {
   const { user, badges, tokenLogs } = useApp();
   const [copied, setCopied] = useState(false);
   const [filter, setFilter] = useState<'all' | 'nft' | 'token'>('all');
+  const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
   const wallet = useWallet();
 
   if (!user) return null;
@@ -42,6 +45,9 @@ export default function Web3Page() {
   return (
     <div className="min-h-screen bg-background relative">
       <FloatingParticles />
+      <AnimatePresence>
+        {selectedBadge && <NFTDetailModal badge={selectedBadge} onClose={() => setSelectedBadge(null)} />}
+      </AnimatePresence>
       <Navbar />
       <main className="pt-20 pb-12 px-4 max-w-5xl mx-auto">
         <motion.h1 className="text-3xl font-display font-black mb-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -192,11 +198,12 @@ export default function Web3Page() {
               {badges.map((badge, i) => (
                 <motion.div
                   key={badge.id}
-                  className={`rounded-2xl p-6 bg-gradient-to-br ${TIER_COLORS[badge.tier]} text-primary-foreground shadow-lg relative overflow-hidden nft-card-spring`}
+                  className={`rounded-2xl p-6 bg-gradient-to-br ${TIER_COLORS[badge.tier]} text-primary-foreground shadow-lg relative overflow-hidden nft-card-spring cursor-pointer`}
                   initial={{ scale: 0, rotate: -10 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: 'spring', stiffness: 260, damping: 20, delay: i * 0.1 }}
                   whileHover={{ scale: 1.05, y: -6, rotateY: 5 }}
+                  onClick={() => setSelectedBadge(badge)}
                 >
                   <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity rounded-2xl" />
                   <p className="text-4xl mb-3 relative">🏅</p>
@@ -206,7 +213,7 @@ export default function Web3Page() {
                     <p className="font-semibold">{badge.tier.toUpperCase()}</p>
                     <p className="font-mono text-[10px]">{badge.tokenId.slice(0, 16)}...</p>
                     <p className="text-[10px]">{badge.earnedAt.toLocaleDateString()}</p>
-                    <p className="text-[10px]">Criteria: {badge.description}</p>
+                    <p className="text-[10px] underline">Click for details →</p>
                   </div>
                 </motion.div>
               ))}

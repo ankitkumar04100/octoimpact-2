@@ -12,6 +12,7 @@ import GuidedTour from '@/components/tours/GuidedTour';
 import { FINTECH_TOUR } from '@/components/tours/tourSteps';
 import FloatingParticles from '@/components/animations/FloatingParticles';
 import { ACTION_TYPES } from '@/types';
+import RecurringSpendDetector from '@/components/fintech/RecurringSpendDetector';
 
 const COLORS = ['#0d9488', '#06b6d4', '#3b82f6', '#22c55e', '#f59e0b', '#ef4444'];
 
@@ -370,6 +371,10 @@ export default function FinTechPage() {
             </div>
           </section>
         )}
+
+
+        {/* --- Section: Recurring Spend --- */}
+        <RecurringSpendDetector transactions={transactions} />
 
         {/* --- Section: Merchant Intelligence --- */}
         {topCarbonMerchants.length > 0 && (
